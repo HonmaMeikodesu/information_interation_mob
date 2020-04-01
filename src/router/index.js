@@ -4,6 +4,8 @@ import BBS from 'components/bbs/bbs'
 import MyPage from 'components/mypage/mypage'
 import Notice from 'components/notice/notice'
 import Login from 'components/login'
+import Oa from 'components/notice/oa'
+import Official from 'components/notice/official'
 import {request} from '../request/http'
 Vue.use(VueRouter)
 const login_state_check_mixin = function(to,from,next){
@@ -38,6 +40,7 @@ const refresh_skey_mixin = function(to,from,next){
     res["identity"] = identity
     localStorage.setItem('login_state',JSON.stringify(res))
     next('/mypage')
+    return
   }).catch(err=>{
     console.log(err)
     next()
@@ -47,7 +50,17 @@ const refresh_skey_mixin = function(to,from,next){
 const routes = [
   {
     path:'/notice',
-    component:MyPage,
+    component:Notice,
+    children:[
+      {
+        path: '/notice/oa',
+        component:Oa
+      },
+      {
+        path: '/notice/official',
+        component: Official
+      }
+    ],
     beforeEnter: login_state_check_mixin
   },
   {
@@ -57,7 +70,7 @@ const routes = [
   },
   {
     path: '/mypage',
-    component: Notice,
+    component: MyPage,
     beforeEnter: login_state_check_mixin
   },
   {

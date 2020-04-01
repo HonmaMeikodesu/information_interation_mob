@@ -6,7 +6,15 @@ import { Button } from 'vant';
 import { Toast } from 'vant';
 import { Picker } from 'vant';
 import { Overlay } from 'vant';
+import { List } from 'vant';
+import { Icon } from 'vant';
+import { PullRefresh } from 'vant';
+import { Search } from 'vant';
 
+Vue.use(Search);
+Vue.use(PullRefresh);
+Vue.use(Icon);
+Vue.use(List);
 Vue.use(Overlay);
 Vue.use(Picker);
 Vue.use(Toast);

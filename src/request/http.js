@@ -1,5 +1,5 @@
 import axios from 'axios'
-axios.defaults.baseURL = 'http://localhost:8080'
+axios.defaults.baseURL = 'http://192.168.1.8:8080/'
 const ERR_OK = "0" 
 export function request(with_login_state,option){
     return new Promise((resolve,reject)=>{
@@ -13,8 +13,11 @@ export function request(with_login_state,option){
             option.headers.identity = identity
         }
         axios(option).then(res=>{
-            if(res.data.code===ERR_OK) resolve(res.data)
-            else reject(res.data.code)
+            if(res.data.code){
+                if(res.data.code===ERR_OK) resolve(res.data)
+                else reject(res.data.code)
+            }
+            resolve(res.data)
         }).catch(err=>{
             reject(err)
         })

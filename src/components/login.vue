@@ -52,6 +52,7 @@
     </div>
 </template>
 <script>
+    import loading_mixin from 'components/loading'
     import {request} from '../request/http'
     export default {
         data() {
@@ -65,6 +66,7 @@
                 show_identity_list:false,
             };
         },
+        mixins: [loading_mixin],
         methods: {
             Login(form_data) {
                 const { username, password } = form_data

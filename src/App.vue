@@ -1,8 +1,10 @@
 <template>
   <div id="app">
+    <keep-alive>
       <router-view />
-    <van-tabbar route>
-      <van-tabbar-item replace to="/notice" icon="newspaper-o">
+    </keep-alive>
+    <van-tabbar route class="footer">
+      <van-tabbar-item replace to="/notice/oa" icon="newspaper-o">
         资讯
       </van-tabbar-item>
       <van-tabbar-item replace to="/bbs" icon="home-o">
@@ -21,12 +23,16 @@
     components: {
 
     },
-    created(){
+    created() {
       this.$router.push('/login')
     }
   }
 </script>
 
-<style>
-
+<style lang="stylus" scoped>
+#app 
+  .footer
+    position fixed
+    bottom 0
+    box-shadow 1 1 1 1
 </style>
