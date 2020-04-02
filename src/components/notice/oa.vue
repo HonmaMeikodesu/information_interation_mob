@@ -44,7 +44,7 @@
       return {
         searchkeyword: "",
         searchSelected: false,
-        searchResultShow: true,
+        searchResultShow: false,
         oaDetailShow: false,
         list: [],
         searchList: [],
@@ -78,6 +78,7 @@
             }
           })
           .then(res => {
+            if(res.length === 0) this.finished = true
             res.forEach(item => {
               this.list.push(item);
             });

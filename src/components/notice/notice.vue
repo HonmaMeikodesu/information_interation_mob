@@ -24,7 +24,20 @@ import loading_mixin from 'components/loading'
 export default {
     data(){
         return{
-            selected: 0
+
+        }
+    },
+    computed: {
+        selected:{
+            get:function(){
+                if(this.$route.path==='/notice/oa') return 0
+                if(this.$route.path==='/notice/official') return 1
+                return -1
+            },
+            set:function(val){
+                return val
+            }
+ 
         }
     },
     methods: {
@@ -73,7 +86,9 @@ export default {
                 font-weight 200
                 transform scale(1.2)
     .content
-        height 100%
+        position absolute
+        top 30px
+        bottom 50px
         overflow auto
         background-color #f3f4f6
 </style>
