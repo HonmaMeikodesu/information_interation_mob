@@ -29,6 +29,11 @@ export default {
   props: ["id"],
   watch: {
     id: function(newID){
+      this.$toast.loading({
+        message:'加载中',
+        forbidClick: true,
+        duration: 0
+      })
       request(false,{
         method: 'get',
         url: '/api/oauth/oa/details',
@@ -39,8 +44,10 @@ export default {
         this.title=res.title
         this.content=res.content
         this.attachment=res.attachment
+        this.$toast.clear()
       }).catch(err=>{
         console.log(err)
+        this.$toast.clear()
         this.$toast.fail('加载失败')
       })
     }

@@ -9,7 +9,7 @@
           <div class="oa-wrapper">
             <div class="oa-id" style="display:none">{{item.id}}</div>
             <div class="oa-title" @click="showOaDetail(item.id)">{{item.title}}</div>
-            <div class="oa-time">{{item.publish_date}}</div>
+            <div class="oa-time">{{ dateFormat(item.publish_date) }}</div>
             <div class="department-wrapper">
               <div class="oa-department">{{item.department}}</div>
               <oastar :item="item"></oastar>
@@ -37,9 +37,12 @@ export default {
     },
     closeResult(){
       this.$emit("searchresultclose",false)
+    },
+    dateFormat: function(date){
+    date = new Date(date)
+    return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
     }
-  }
-
+  },
 }
 </script>
 <style lang="stylus" scoped>
