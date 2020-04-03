@@ -10,7 +10,11 @@ import { List } from 'vant';
 import { Icon } from 'vant';
 import { PullRefresh } from 'vant';
 import { Search } from 'vant';
+import { Tag } from 'vant';
+import { Image } from 'vant';
 
+Vue.use(Image);
+Vue.use(Tag);
 Vue.use(Search);
 Vue.use(PullRefresh);
 Vue.use(Icon);
