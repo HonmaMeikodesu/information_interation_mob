@@ -13,7 +13,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://129.204.43.32:7001',
+        target: 'http://129.204.43.32:7002/api',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '' //代理的路径

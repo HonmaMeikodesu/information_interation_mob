@@ -23,7 +23,7 @@
           <officialdetail :url="url" v-show="officialDetailShow" @detailclose="officialDetailShow=$event" class="official-detail"></officialdetail>
         </transition>
         <transition name="slide">
-          <officialsearchresult class="search-result" @show-result-detail="showOaDetailInResult($event)" @searchresultclose="searchResultShow=$event" v-show="searchResultShow" v-bind:search-list="searchList"></officialsearchresult>
+          <officialsearchresult class="search-result" @show-result-detail="showOfficialDetailInResult($event)" @searchresultclose="searchResultShow=$event" v-show="searchResultShow" v-bind:search-list="searchList"></officialsearchresult>
         </transition>
     </div>
 </template>
@@ -136,7 +136,6 @@
             ncs_keyword: keyword
           }
         }).then(res => {
-          console.log(res.officialList)
           this.searchList = res.officialList
           this.searchResultShow = true;
         });

@@ -8,7 +8,7 @@
         <div v-for="item in searchList" :key="item.id">
           <div class="official-wrapper">
             <div class="official-id" style="display:none">{{item.id}}</div>
-            <div class="official-title" @click="showOfficialDetail(item.id)">{{item.official_title}}</div>
+            <div class="official-title" @click="showOfficialDetail(item.official_url)">{{item.official_title}}</div>
             <div class="official-time">{{computePublishDate(item.created_at,item.updated_at)}}</div>
             <div class="department-wrapper">
               <div class="official-department">{{item.organization_name}}</div>
@@ -35,8 +35,8 @@ export default {
   },
   props: ["searchList"],
   methods:{
-    showOfficialDetail(id) {
-        this.$emit("show-result-detail",id)
+    showOfficialDetail(url) {
+        this.$emit("show-result-detail",url)
     },
     closeResult(){
       this.$emit("searchresultclose",false)

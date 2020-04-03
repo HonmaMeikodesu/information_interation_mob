@@ -1,5 +1,5 @@
 <template>
-    <div id="notice">
+    <div id="notice" class="global-notice">
         <header>
             <div class="oa" :class="{active:selected===0}" @click="switchOa">
                 <span>

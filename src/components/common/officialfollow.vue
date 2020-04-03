@@ -15,7 +15,6 @@
         } else return false;
       },
       followToggle(name) {
-        console.log(name);
         let full_name = "organization/" + name;
         if (this.followJudge(name)) {
           request(true, {
