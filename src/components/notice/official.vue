@@ -102,12 +102,14 @@
           });
       },
       onRefresh() {
+        let newStart = 1
+        let newEnd = 20
         request(true, {
             method: "get",
             url: "api/official/get_all_list",
             params: {
-              row_start: 1,
-              row_end: 20
+              row_start: newStart,
+              row_end: newEnd
             }
           })
           .then(res => {
@@ -116,9 +118,12 @@
               this.refreshing = false;
               return;
             }
-            const gap = res[0].id - this.list[0].id;
-            const newOa = res.slice(0, gap - 1);
-            this.list = newOa.concat(this.list);
+            // const gap = res[0].id - this.list[0].id;
+            // const newOa = res.slice(0, gap - 1);
+            // this.list = newOa.concat(this.list);
+            this.list = res
+            row_start = newStart+20
+            row_end = newEnd+20
             this.refreshing = false;
           })
           .catch(err => {

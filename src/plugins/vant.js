@@ -12,7 +12,11 @@ import { PullRefresh } from 'vant';
 import { Search } from 'vant';
 import { Tag } from 'vant';
 import { Image } from 'vant';
+import { Dialog } from 'vant';
+import { Loading } from 'vant';
 
+Vue.use(Loading);
+Vue.use(Dialog);
 Vue.use(Image);
 Vue.use(Tag);
 Vue.use(Search);
