@@ -1,5 +1,5 @@
 import axios from 'axios'
-axios.defaults.baseURL = 'http://192.168.1.5:8080/'
+axios.defaults.baseURL = 'http://192.168.1.8:8080/'
 const ERR_OK = "0" 
 export function request(with_login_state,option){
     return new Promise((resolve,reject)=>{

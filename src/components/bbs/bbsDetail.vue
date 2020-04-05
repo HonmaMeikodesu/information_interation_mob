@@ -123,13 +123,13 @@ export default {
         const clientHeight = this.$root.$el.getElementsByClassName('test-client-height')[0].offsetHeight
         const fullScreenHeight = clientHeight-bottomSize-topSize
         const commentHeight = this.$el.getElementsByClassName('comment-content')[0].offsetHeight
-        if(commentHeight==fullScreenHeight) this.$el.getElementsByClassName('comment-content')[0].style.height = ''
         if(commentHeight>fullScreenHeight) this.$el.getElementsByClassName('comment-content')[0].style.height = `${fullScreenHeight}px`
       })
     }
   },
   methods:{
     closeDetail(){
+      this.$el.getElementsByClassName('comment-content')[0].style.height = ''
       this.$emit('closedetail',false)
     },
     computeAvatar(avatar){
