@@ -1,6 +1,6 @@
 <template>
   <div id="bbs-essay">
-    <van-overlay :show="showFullImg" @click="showFullImg = false">
+    <van-overlay :show="showFullImg" @click="showFullImg = false" z-index="99">
       <div class="full-img-wrapper">
           <van-image :src="fullImgUrl" cover></van-image>
       </div>
@@ -69,11 +69,11 @@
                 <div class="essay-body-info-author-name">{{item.essay_user_nickname}}</div>
                 <div class="essay-body-info-time">{{computePublishTime(item.updated_at)}}</div>
                 <div class="essay-body-info-edited" v-if="(item.created_at==item.updated_at)&&juegeEssayOwner(item.essay_user_id,item.essay_user_identity)">
-                    <van-tag mark type="primary" class="essay-body-info-edited-history">编辑该文章</van-tag>
+                    <van-tag mark type="primary" class="essay-body-info-edited-history" @click="prepareToEditEssay(item.id,$event.target)">编辑该文章</van-tag>
                 </div>
                 <div class="essay-body-info-edited" v-if="!(item.created_at==item.updated_at)">
                     <span class="essay-body-info-edited-hint">已被编辑过</span>
-                    <van-tag mark type="primary" class="essay-body-info-edited-history">查看编辑记录</van-tag>
+                    <van-tag mark type="primary" class="essay-body-info-edited-history" @click="showMeHistory(item.id)">查看编辑记录</van-tag>
                 </div>
             </div>
             <div class="essay-body-content">
@@ -113,11 +113,65 @@
             </div>
         </div>
     </div> 
+    <transition name="van-slide-left">
+        <div class="send-essay" v-show="editEssaySelected">
+            <div class="send-essay-header">
+                <div class="send-essay-header">
+                    <van-icon name="arrow-left" @click="closeEditEssay" size="25px" class="send-essay-close" color="white"/>
+                    <span class="send-essay-title">修改文章</span>
+                </div>
+            </div>
+            <div class="text-area">
+                <van-field
+                v-model="essayToEdit"
+                rows="2"
+                autosize
+                type="textarea"
+                maxlength="100"
+                show-word-limit
+                />
+            </div>
+            <div class="img-area">
+                <van-uploader
+                v-model="imgToUpdateList"
+                multiple
+                max-count="4"
+                max-size='5120‬'
+                :before-read='imgTypeCheck'
+                />
+            </div>
+            <div class="van-hairline--bottom"></div>
+            <div class="push-essay-to-server">
+                <van-button block @click="updateEssay" type="info">确定修改</van-button>
+            </div>
+        </div>
+    </transition>
+    <van-overlay :show="historyShow" @click="historyShow = false">
+        <div class="edit-history">
+            <div class="history-content">
+                <span>{{historyContent}}</span>
+            </div>
+            <div class="history-img">
+                <van-image 
+                v-for="img in filterImgArr(historyImg)" 
+                :key="img"
+                :src="imgServerUrl.concat(img)"
+                width="100px"
+                height="100px"
+                cover
+                @click.stop="switchFullImg(imgServerUrl.concat(img))"
+                >
+                </van-image>
+            </div>
+        </div>
+    </van-overlay>
   </div>
 </template>
 <script>
 import {request} from '../../request/http'
 import {Dialog} from 'vant'
+import {urlToBase64,base64toFile} from '../../utils/imgHandler'
+import {uploadImg} from '../../utils/qiniuUpload'
 export default {
   data(){
       return{
@@ -127,6 +181,13 @@ export default {
           other_identity: '',
           other_info: {},
           show: false,
+          essayToEdit: '',
+          imgToUpdateList: [],
+          essayIDOnUpdate: -1,
+          editEssaySelected: false,
+          historyContent: '',
+          historyImg: '',
+          historyShow: false,
       }
   },
   props: ["list","now"],
@@ -381,12 +442,139 @@ export default {
       },
       iNeedMoreDetails(item){
           this.$emit('needMoreDetail',item)
+      },
+      updateEssay(){
+        let id = this.essayIDOnUpdate
+        Dialog.confirm({
+            title: '确认提示',
+            message: '更新机会只有一次，确定要更新文章嘛?'
+        }).then(() => {
+            this.$toast.$loading('更新中')
+            request(true,{
+                method: 'get',
+                url: '/api/moment/update_essay',
+                params:{
+                    essay_id:id,
+                    content: this.essayToEdit
+                }
+            }).then(()=>{
+                let promiseList = []
+                this.imgToUpdateList.forEach(item=>{
+                    promiseList.push(uploadImg(id,item.file))
+                })
+                Promise.all(promiseList).then(()=>{
+                    this.$toast.clear()
+                    this.$toast.success('更新完毕')
+                    this.essayToEdit='',
+                    this.imgToUpdateList=[]
+                    this.editEssaySelected=false
+                    this.$emit('updateEssayAndRefresh')
+                }).catch(err=>{
+                    console.log(err)
+                    this.$toast.clear()
+                    this.$toast.fail('更新失败')
+                    this.essayToEdit='',
+                    this.imgToUpdateList=[]
+                    this.editEssaySelected=false
+                    this.$emit('updateEssayAndRefresh')
+                })
+            })
+        }).catch(() => {
+        // on cancel
+        })
+      },
+      imgTypeCheck(file){
+          if (file.type !== 'image/jpeg'&&file.type !== 'image/png') {
+              this.$toast.fail('请上传jpg,jpeg,png格式图片')
+              return false;
+          }
+          return true;
+      },
+      prepareToEditEssay(id,dom){
+          this.essayIDOnUpdate=id
+          // 由url构造file对象重新上传
+          let imgUrlList = []
+          let imgCollection = dom.parentNode.parentNode.parentNode.getElementsByTagName('img')
+          for(let i=0;i<imgCollection.length;i++){
+              imgUrlList.push(imgCollection[i].src)
+          }
+          imgUrlList.forEach(item=>{
+            let tem = document.createElement('img')
+            tem.setAttribute("crossOrigin",'Anonymous')
+            tem.src=item
+            let bstr
+            const vueThis = this
+            tem.onload=function(){
+                bstr = urlToBase64(tem)
+                const file=base64toFile(bstr,`bbs-essay-${id}.jpg`)
+                let fileCollection = {
+                    file,
+                    content:bstr
+                }
+                vueThis.imgToUpdateList.push(fileCollection)
+            }
+          })
+          let originalWords=dom.parentNode.parentNode.parentNode.getElementsByClassName('essay-body-content-words')[0].innerText
+          this.essayToEdit=originalWords
+          this.editEssaySelected=true
+      },
+      closeEditEssay(){
+        this.essayToEdit='',
+        this.imgToUpdateList=[]
+        this.editEssaySelected=false
+      },
+      showMeHistory(id){
+          this.$toast.$loading('获取历史信息中')
+          request(true,{
+              method: 'get',
+              url: '/api/moment/previous_essay',
+              params: {
+                  essay_id: id
+              }
+          }).then(res=>{
+              this.historyContent=res.essay_content
+              this.historyImg=res.essay_user_image_url
+              this.$toast.clear()
+              this.historyShow=true
+          }).catch(err=>{
+              console.log(err)
+              this.$toast.$free_fail('加载失败')
+          })
       }
   }
 }
 </script>
 <style lang="stylus" scoped>
 #bbs-essay
+    .send-essay
+        position fixed
+        top 0px
+        bottom 50px
+        left 0px
+        right 0px
+        z-index 99
+        background-color white
+        .send-essay-header
+            background-color #1989fa
+            height 40px
+            .send-essay-close
+                position absolute
+                left 5px
+                top 7.5px
+            .send-essay-title
+                display inline-block
+                width 100%
+                height 40px
+                line-height 40px
+                text-align center
+                color white
+                font-weight 80px
+        .img-area
+            padding 20px 10px
+        .push-essay-to-server
+            width 80%
+            padding-top 20px
+            margin 0 auto
   .user-info-detail
     *
         padding 5px 0
@@ -396,6 +584,16 @@ export default {
     align-items center
     justify-content center
     height 100%
+  .edit-history
+    background-color rgba(247,248,250,.8)
+    display flex
+    flex-direction column
+    align-items center
+    justify-content center
+    height 100%
+    flex-wrap wrap
+    .history-content
+        padding 15px
   .essay-wrapper
     display flex
     background-color white

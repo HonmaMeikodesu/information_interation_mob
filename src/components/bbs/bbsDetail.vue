@@ -51,7 +51,7 @@
         <van-icon name="add" class="add" size="20px" color="#f3f4f6" @click="sendCommentSelected=true" />
       </div>
       <div class="comment-content" @click="sendCommentSelected=false">
-        <bbsItem :list="list" :now="now" @essayDeleted="closeDetailAndRefresh"></bbsItem>
+        <bbsItem :list="list" :now="now" @essayDeleted="closeDetailAndRefresh" @updateEssayAndRefresh='updateEssayAndRefresh'></bbsItem>
         <div class="comment-wrapper">
           <div class="comment" v-for="item in comment" :key="item.id">
             <div class="comment-id" id="item.id" style="display:none"></div>
@@ -287,6 +287,9 @@ export default {
     },
     closeDetailAndRefresh(){
       this.$emit('closeDetailAndRefresh')
+    },
+    updateEssayAndRefresh(){
+      this.$emit('updateEssayAndRefresh')
     }
   },
   computed: {

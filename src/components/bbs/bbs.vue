@@ -7,19 +7,19 @@
             <van-icon name="add" class="add" size="20px" color="#359ce7" @click="sendEssaySelected=true"/>
         </div>
         <div class="searchBar">
-            <van-search v-model="keyword" placeholder="请输入搜索关键词" @focus="onFocus" @blur="onBlur"/>
+            <van-search v-model="keyword" placeholder="请输入搜索关键词" @focus="onFocus" @blur="onBlur" @search="onSearch"/>
         </div>
         <div class="searchOverLay" v-show="searchSelected"></div>
         <div class="bbsList">
             <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
                 <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-                    <bbsItem :list="list" :now="now" @needMoreDetail="passBBSDetail=$event"></bbsItem>
+                    <bbsItem :list="list" :now="now" @needMoreDetail="passBBSDetail=$event" @updateEssayAndRefresh='updateEssayAndRefresh'></bbsItem>
                 </van-list>
             </van-pull-refresh>
         </div>
         <div class="bbsDetail">
             <transition name="slide-down">
-                <bbsDetail :list="[bbsDetail]" :comment="comment" :now="now" v-show="bbsDetailShow" @closedetail="bbsDetailShow=$event" @commentIncrease="commentNumChange($event,true)" @commentDecrease="commentNumChange($event,false)" @closeDetailAndRefresh="closeDetailAndRefresh"></bbsDetail>
+                <bbsDetail :list="[bbsDetail]" :comment="comment" :now="now" v-show="bbsDetailShow" @closedetail="bbsDetailShow=$event" @commentIncrease="commentNumChange($event,true)" @commentDecrease="commentNumChange($event,false)" @closeDetailAndRefresh="closeDetailAndRefresh" @updateEssayAndRefresh='updateEssayAndRefresh'></bbsDetail>
             </transition>
         </div>
         <transition name="van-slide-right">
@@ -154,10 +154,6 @@
                     }
                 }).then(res=>{
                     res=res.essay
-                    if (res[0].id === this.list[0].id) {
-                    this.refreshing = false;
-                    return;
-                    }
                     this.list = res
                     row_start = newStart+16
                     row_end = newEnd+16
@@ -189,6 +185,7 @@
                         this.$toast.clear()
                         this.$toast.success('发送完毕')
                         this.sendEssaySelected=false
+                        this.essayToSend=''
                         this.$options.methods.onRefresh.call(this)
                         return
                     }
@@ -238,6 +235,25 @@
             closeDetailAndRefresh(){
                 this.bbsDetailShow=false
                 this.$options.methods.onRefresh.call(this)
+            },
+            updateEssayAndRefresh(){
+                this.$options.methods.onRefresh.call(this)
+            },
+            onSearch(keyword){
+                this.$toast.$loading('搜索中')
+                request(true,{
+                    method: 'post',
+                    url: '/api/moment/search',
+                    data:{
+                        ncs_keyword: keyword
+                    }
+                }).then(res=>{
+                    this.list=res.essay
+                    this.$toast.clear()
+                }).catch(err=>{
+                    console.log(err)
+                    this.$toast.$fail('搜索失败')
+                })
             }
         },
         mixins: [loading_mixin]

@@ -40,4 +40,12 @@ Vue.prototype.$toast.$loading = function(message){
     duration: 0
   })
 }
+Vue.prototype.$toast.$free_success = function(message){
+  Vue.prototype.$toast.clear()
+  Vue.prototype.$toast.success(message)
+}
+Vue.prototype.$toast.$free_fail = function(message){
+  Vue.prototype.$toast.clear()
+  Vue.prototype.$toast.fail(message)
+}
 
