@@ -13,7 +13,7 @@
 export default {
   data(){
     return {
-      baseUrl: 'http://192.168.1.5:8080/'
+      baseUrl: 'http://192.168.1.8:8080/'
     }
   },
   props: ["url"],
@@ -53,10 +53,9 @@ export default {
     }
   },
   mounted(){
-    const topSize = 50
-    const bottomSize = 50
+    const topSize = 40
     const clientHeight = this.$root.$el.getElementsByClassName('global-notice')[0].offsetHeight
-    this.$el.getElementsByClassName('outsider-official')[0].style.height = `${clientHeight-bottomSize-topSize}px`
+    this.$el.getElementsByClassName('outsider-official')[0].style.height = `${clientHeight-topSize}px`
   }
 }
 </script>

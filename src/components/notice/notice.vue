@@ -56,7 +56,11 @@ export default {
 <style lang="stylus" scoped>
 #notice
     position fixed
-    height 100%
+    z-index 99
+    top 0px
+    left 0px
+    right 0px
+    bottom 50px
     width 100%
     header 
         display flex
@@ -87,8 +91,9 @@ export default {
                 transform scale(1.2)
     .content
         position absolute
+        z-index 99
         top 30px
-        bottom 50px
+        bottom 0px
         overflow auto
         background-color #f3f4f6
 </style>
