@@ -22,10 +22,36 @@
                 <bbsDetail :list="[bbsDetail]" :comment="comment" :now="now" v-show="bbsDetailShow" @closedetail="bbsDetailShow=$event"></bbsDetail>
             </transition>
         </div>
+        <div class="send-essay">
+            <div class="text-area">
+                <van-field
+                v-model="essayToSend"
+                rows="2"
+                autosize
+                type="textarea"
+                maxlength="100"
+                placeholder="请输入文本"
+                show-word-limit
+                />
+            </div>
+            <div class="img-area">
+                <van-uploader
+                v-model="imgList"
+                multiple
+                max-count="4"
+                max-size='5120‬'
+                :before-read='imgTypeCheck'
+                />
+            </div>
+            <div class="push-essay-to-server">
+                <van-button block @click="sendEssay">发送</van-button>
+            </div>
+        </div>
     </div>
 </template>
 <script>
     import {request} from '../../request/http'
+    import {uploadImg} from '../../utils/qiniuUpload'
     import loading_mixin from 'components/loading'
     import bbsItem from 'components/bbs/bbsItem'
     import bbsDetail from 'components/bbs/bbsDetail'
@@ -35,6 +61,8 @@
         name: 'bbs',
         data(){
             return{
+                imgList: [],
+                essayToSend: '',
                 list: [],
                 keyword: '',
                 refreshing: false,
@@ -139,6 +167,48 @@
             onBlur(){
                 this.searchSelected=false
 
+            },
+            sendEssay(){
+                this.$toast.$loading('发送中')
+                request(true,{
+                    method: 'get',
+                    url: '/api/moment/send',
+                    params:{
+                        content: this.essayToSend
+                    }
+                }).then(res=>{
+                    if(this.imgList.length===0) return
+                    let id = res.id
+                    let promiseList
+                    for(let i=0;i<this.imgList.length;i++){
+                        promiseList.push(uploadImg(id,this.imgList[i].file))
+                    }
+                    Promise.all(promiseList).then(()=>{
+                        this.$toast.clear()
+                        this.$toast.success('发送完毕')
+                    }).catch(err=>{
+                        console.log(err)
+                        // 文章图片发送失败，自动将整篇文章删除(删除失败就算了)
+                        request(true,{
+                            method: 'get',
+                            url: '/api/moment/delete_essay',
+                            params:{
+                                id
+                            }
+                        })
+                        this.$toast.clear()
+                        this.$toast.fail('发送失败')
+                    })
+                }).catch(err=>{
+                    console.log(err)
+                })
+            },
+            imgTypeCheck(file){
+                if (file.type !== 'image/jpeg'&&file.type !== 'image/png') {
+                    this.$toast.fail('请上传jpg,jpeg,png格式图片')
+                    return false;
+                }
+                return true;
             },
         },
         mixins: [loading_mixin]

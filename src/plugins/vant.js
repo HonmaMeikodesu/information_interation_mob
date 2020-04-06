@@ -14,7 +14,9 @@ import { Tag } from 'vant';
 import { Image } from 'vant';
 import { Dialog } from 'vant';
 import { Loading } from 'vant';
+import { Uploader } from 'vant';
 
+Vue.use(Uploader);
 Vue.use(Loading);
 Vue.use(Dialog);
 Vue.use(Image);
@@ -31,5 +33,11 @@ Vue.use(Field);
 Vue.use(Form);
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
-
+Vue.prototype.$toast.$loading = function(message){
+  Vue.prototype.$toast.loading({
+    message,
+    forbidClick: true,
+    duration: 0
+  })
+}
 

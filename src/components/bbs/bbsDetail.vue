@@ -48,9 +48,9 @@
       <div class="header">
         <van-icon name="arrow-left" @click="closeDetail()" size="25px" class="close" color="white"/>
         <span class="header-title">文章详情</span>
-        <van-icon name="add" class="add" size="20px" color="#f3f4f6" />
+        <van-icon name="add" class="add" size="20px" color="#f3f4f6" @click="sendCommentSelected=true" />
       </div>
-      <div class="comment-content">
+      <div class="comment-content" @click="sendCommentSelected=false">
         <bbsItem :list="list" :now="now"></bbsItem>
         <div class="comment-wrapper">
           <div class="comment" v-for="item in comment" :key="item.id">
@@ -95,6 +95,21 @@
       </div>
     </div>
     <div class="over-lay-half" @click="closeDetail()"></div>
+    <div class="send-comment" v-show="sendCommentSelected">
+      <van-field
+      v-model="commentToSend"
+      rows="2"
+      autosize
+      type="textarea"
+      maxlength="50"
+      placeholder="评论一下~"
+      show-word-limit
+      >
+        <template #button>
+          <van-button size="small" color="#1989fa" @click="sendComment">发送</van-button>
+        </template>
+      </van-field>
+    </div>
   </div>
 </template>
 <script>
@@ -109,6 +124,8 @@ export default {
       other_info: {},
       show: false,
       loadMoreSelected: false,
+      sendCommentSelected: false,
+      commentToSend: '',
     }
   },
   props:['list','comment',"now"],
@@ -129,6 +146,10 @@ export default {
   },
   methods:{
     closeDetail(){
+      if(this.sendCommentSelected===true){
+        this.sendCommentSelected=false
+        return
+      }
       this.$el.getElementsByClassName('comment-content')[0].style.height = ''
       this.$emit('closedetail',false)
     },
@@ -231,6 +252,36 @@ export default {
       }).catch(() => {
       // on cancel
       });
+    },
+    sendComment(){
+      if(this.commentToSend===''){
+        this.$toast.fail('评论不能为空')
+        return
+      }
+      this.$toast.loading({
+        message:'发送中',
+        forbidClick: true,
+        duration: 0
+      })
+      request(true,{
+        method: 'get',
+        url: '/api/moment/comment',
+        params:{
+          essay_id: this.list[0].id,
+          content: this.commentToSend, // vue自动对<,>等敏感字符做转义，防止XSS
+          avatar: this.$store.getters.basisInfo.avatar_url || this.$store.getters.organization_basisInfo.avatar_url,
+          nickname: this.$store.getters.basisInfo.nickname || this.$store.getters.organization_basisInfo.organization_name
+        }
+      }).then(()=>{
+        this.$toast.clear()
+        this.$options.methods.loadMore.call(this,this.list[0].id)
+        this.$toast.success('发送成功')
+        this.commentToSend=''
+      }).catch(err=>{
+        console.log(err)
+        this.$toast.clear()
+        this.$toast.fail('发送失败')
+      })
     }
   },
   computed: {
@@ -311,4 +362,10 @@ export default {
   .over-lay-half
     flex 1
     background-color rgba(80,80,80,.7)
+  .send-comment
+    position fixed
+    z-index 99
+    bottom 0px
+    left 0px
+    right 0px
 </style>
