@@ -325,6 +325,7 @@ export default {
           })
       },
       deleteEssay(id){
+        console.log(id)
         Dialog.confirm({
         title: '确认提示',
         message: '您确定要删除该文章吗'
@@ -348,6 +349,7 @@ export default {
               }
               this.list.splice(index,1)
               this.$toast.clear()
+              this.$emit('essayDeleted')
           }).catch(err=>{
               console.log(err)
               this.$toast.clear()

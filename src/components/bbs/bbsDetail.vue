@@ -51,7 +51,7 @@
         <van-icon name="add" class="add" size="20px" color="#f3f4f6" @click="sendCommentSelected=true" />
       </div>
       <div class="comment-content" @click="sendCommentSelected=false">
-        <bbsItem :list="list" :now="now"></bbsItem>
+        <bbsItem :list="list" :now="now" @essayDeleted="closeDetailAndRefresh"></bbsItem>
         <div class="comment-wrapper">
           <div class="comment" v-for="item in comment" :key="item.id">
             <div class="comment-id" id="item.id" style="display:none"></div>
@@ -244,6 +244,7 @@ export default {
             }
             this.comment.splice(index,1)
             this.$toast.clear()
+            this.$emit('commentDecrease',this.list[0].id)
         }).catch(err=>{
             console.log(err)
             this.$toast.clear()
@@ -277,11 +278,15 @@ export default {
         this.$options.methods.loadMore.call(this,this.list[0].id)
         this.$toast.success('发送成功')
         this.commentToSend=''
+        this.$emit('commentIncrease',this.list[0].id)
       }).catch(err=>{
         console.log(err)
         this.$toast.clear()
         this.$toast.fail('发送失败')
       })
+    },
+    closeDetailAndRefresh(){
+      this.$emit('closeDetailAndRefresh')
     }
   },
   computed: {

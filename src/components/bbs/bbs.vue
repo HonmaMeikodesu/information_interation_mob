@@ -4,7 +4,7 @@
         <div class="test-client-height" style="position:fixed;top:0;bottom:0;width:100%;z-index=-999" ></div>
         <div class="header">
             <span class="title">信息圈</span>
-            <van-icon name="add" class="add" size="20px" color="#359ce7" />
+            <van-icon name="add" class="add" size="20px" color="#359ce7" @click="sendEssaySelected=true"/>
         </div>
         <div class="searchBar">
             <van-search v-model="keyword" placeholder="请输入搜索关键词" @focus="onFocus" @blur="onBlur"/>
@@ -19,34 +19,41 @@
         </div>
         <div class="bbsDetail">
             <transition name="slide-down">
-                <bbsDetail :list="[bbsDetail]" :comment="comment" :now="now" v-show="bbsDetailShow" @closedetail="bbsDetailShow=$event"></bbsDetail>
+                <bbsDetail :list="[bbsDetail]" :comment="comment" :now="now" v-show="bbsDetailShow" @closedetail="bbsDetailShow=$event" @commentIncrease="commentNumChange($event,true)" @commentDecrease="commentNumChange($event,false)" @closeDetailAndRefresh="closeDetailAndRefresh"></bbsDetail>
             </transition>
         </div>
-        <div class="send-essay">
-            <div class="text-area">
-                <van-field
-                v-model="essayToSend"
-                rows="2"
-                autosize
-                type="textarea"
-                maxlength="100"
-                placeholder="请输入文本"
-                show-word-limit
-                />
+        <transition name="van-slide-right">
+            <div class="send-essay" v-show="sendEssaySelected">
+                <div class="send-essay-header">
+                    <van-icon name="arrow-left" @click="sendEssaySelected=false" size="25px" class="send-essay-close" color="white"/>
+                    <span class="send-essay-title">发送文章</span>
+                </div>
+                <div class="text-area">
+                    <van-field
+                    v-model="essayToSend"
+                    rows="2"
+                    autosize
+                    type="textarea"
+                    maxlength="100"
+                    placeholder="请输入文本"
+                    show-word-limit
+                    />
+                </div>
+                <div class="img-area">
+                    <van-uploader
+                    v-model="imgList"
+                    multiple
+                    max-count="4"
+                    max-size='5120‬'
+                    :before-read='imgTypeCheck'
+                    />
+                </div>
+                <div class="van-hairline--bottom"></div>
+                <div class="push-essay-to-server">
+                    <van-button block @click="sendEssay" type="info">发送</van-button>
+                </div>
             </div>
-            <div class="img-area">
-                <van-uploader
-                v-model="imgList"
-                multiple
-                max-count="4"
-                max-size='5120‬'
-                :before-read='imgTypeCheck'
-                />
-            </div>
-            <div class="push-essay-to-server">
-                <van-button block @click="sendEssay">发送</van-button>
-            </div>
-        </div>
+        </transition>
     </div>
 </template>
 <script>
@@ -73,6 +80,7 @@
                 bbsDetail: {},
                 comment: [],
                 now: new Date(),
+                sendEssaySelected: false,
             }
         },
         components:{
@@ -177,15 +185,23 @@
                         content: this.essayToSend
                     }
                 }).then(res=>{
-                    if(this.imgList.length===0) return
+                    if(this.imgList.length===0) {
+                        this.$toast.clear()
+                        this.$toast.success('发送完毕')
+                        this.sendEssaySelected=false
+                        this.$options.methods.onRefresh.call(this)
+                        return
+                    }
                     let id = res.id
-                    let promiseList
+                    let promiseList = []
                     for(let i=0;i<this.imgList.length;i++){
                         promiseList.push(uploadImg(id,this.imgList[i].file))
                     }
                     Promise.all(promiseList).then(()=>{
                         this.$toast.clear()
                         this.$toast.success('发送完毕')
+                        this.sendEssaySelected=false
+                        this.$options.methods.onRefresh.call(this)
                     }).catch(err=>{
                         console.log(err)
                         // 文章图片发送失败，自动将整篇文章删除(删除失败就算了)
@@ -210,6 +226,19 @@
                 }
                 return true;
             },
+            commentNumChange(id,flag){
+                console.log(id+flag)
+                for(let item of this.list){
+                    if(item.id===id){
+                        item.review_num=flag?item.review_num+1:item.review_num-1
+                        break
+                    }
+                }
+            },
+            closeDetailAndRefresh(){
+                this.bbsDetailShow=false
+                this.$options.methods.onRefresh.call(this)
+            }
         },
         mixins: [loading_mixin]
     }
@@ -260,4 +289,35 @@
             transition all .5s ease 
         .slide-down-enter,.slide-down-leave-to
             transform translate3d(0,-100%,0)
+    .send-essay
+        position fixed
+        top 0px
+        bottom 50px
+        left 0px
+        right 0px
+        z-index 99
+        background-color white
+        .send-essay-header
+            background-color #1989fa
+            height 40px
+            .send-essay-close
+                position absolute
+                left 5px
+                top 7.5px
+            .send-essay-title
+                display inline-block
+                width 100%
+                height 40px
+                line-height 40px
+                text-align center
+                color white
+                font-weight 80px
+        .img-area
+            padding 20px 10px
+        .push-essay-to-server
+            width 80%
+            padding-top 20px
+            margin 0 auto
+        
+
 </style>
