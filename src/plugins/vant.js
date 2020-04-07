@@ -15,7 +15,10 @@ import { Image } from 'vant';
 import { Dialog } from 'vant';
 import { Loading } from 'vant';
 import { Uploader } from 'vant';
+import { Tab, Tabs } from 'vant';
 
+Vue.use(Tab);
+Vue.use(Tabs);
 Vue.use(Uploader);
 Vue.use(Loading);
 Vue.use(Dialog);

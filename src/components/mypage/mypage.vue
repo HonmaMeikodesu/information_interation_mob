@@ -32,25 +32,28 @@
                 </div>
                 <div class="user-full-info-push">
                     <div class="user-full-info">
-                        <van-button round type="info">个人信息</van-button>
+                        <van-button round type="info" size="small">个人信息</van-button>
                     </div>
                     <div class="user-push">
-                        <van-icon name="chat-o" class="user-message-bucket"/>
+                        <van-icon name="chat-o" class="user-message-bucket" size="30px"/>
                     </div>
                 </div>
                 <div class="user-signature">
                     <span v-if="identity==='student'">个人签名:</span>
                     <span v-else>组织介绍:</span>
                     <span class="user-signature-content">{{userSignature}}</span>
+                    <van-icon name="edit" size="20px"/>
                 </div>
             </div>   
         </div> 
         <div class="user-stuff-main-select">
-            <div class="send-history"></div>
-            <div class="book-history"></div>
-            <div class="like-history"></div>
+            <van-tabs v-model="userTopSelect" title-active-color="rgb(53,156,231)" color="rgb(53,156,231)">
+                <van-tab class="send-history" title="发过" to="/mypage/send"></van-tab>
+                <van-tab class="book-history" title="收藏" to="/mypage/book"></van-tab>
+                <van-tab class="like-history" title="赞过" to="/mypage/like"></van-tab>
+            </van-tabs>
         </div>
-        <div class="user-stuff-choose">
+        <div class="user-stuff-choose">111
             <router-view></router-view>
         </div>
     </div>
@@ -62,6 +65,7 @@ export default {
     name: 'mypage',
     data(){
         return{
+            userTopSelect:1
         }
     },
     computed:{
@@ -110,4 +114,34 @@ export default {
             position absolute
             right 10px
             top 5px
+    .my-page-user-info
+        display flex
+        .user-avatar-nickname
+            flex 0
+            .user-avatar
+                padding 5px
+            .user-nickname
+                width 100%
+                text-align center
+        .user-main-info
+            flex 1
+            .user-follow-fans
+                display flex
+                .user-follow
+                    flex 1
+                .user-fans
+                    flex 1
+            .user-full-info-push
+                display flex
+                .user-full-info
+                    flex 1
+                    button
+                        left 10px
+                        width 80%
+                .user-push
+                    flex 1
+            .user-signature
+                width 100%
+        
+        
 </style>
