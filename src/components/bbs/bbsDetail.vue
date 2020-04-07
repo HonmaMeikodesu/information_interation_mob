@@ -264,14 +264,15 @@ export default {
         forbidClick: true,
         duration: 0
       })
+      let identity = this.$store.getters.identity
       request(true,{
         method: 'get',
         url: '/api/moment/comment',
         params:{
           essay_id: this.list[0].id,
           content: this.commentToSend, // vue自动对<,>等敏感字符做转义，防止XSS
-          avatar: this.$store.getters.basisInfo.avatar_url || this.$store.getters.organization_basisInfo.avatar_url,
-          nickname: this.$store.getters.basisInfo.nickname || this.$store.getters.organization_basisInfo.organization_name
+          avatar: (identity==='student')?this.$store.getters.basisInfo.avatar_url:this.$store.getters.organization_basisInfo.avatar_url,
+          nickname: (identity==='student')?this.$store.getters.basisInfo.nickname:this.$store.getters.organization_basisInfo.organization_name
         }
       }).then(()=>{
         this.$toast.clear()

@@ -1,6 +1,6 @@
 <!--热搜功能和置顶文章功能后期再加上去-->
 <template>
-    <div id="bbs">
+    <div id="bbs" v-if="flag">
         <div class="test-client-height" style="position:fixed;top:0;bottom:0;width:100%;z-index=-999" ></div>
         <div class="header">
             <span class="title">信息圈</span>
@@ -88,6 +88,10 @@
             bbsDetail
         },
         computed: {
+            flag(){
+                if(!this.$store.state.user_info.basisInfo) return false
+                return true
+            },
             passBBSDetail:{
                 get:function(){
                     return this.bbsDetail

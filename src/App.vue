@@ -18,14 +18,13 @@
 </template>
 
 <script>
+  import loading_mixin from 'components/loading'
   export default {
     name: 'app',
     components: {
 
     },
-    created() {
-      this.$router.push('/login')
-    }
+    mixins: [loading_mixin]
   }
 </script>
 

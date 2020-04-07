@@ -2,6 +2,15 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import BBS from 'components/bbs/bbs'
 import MyPage from 'components/mypage/mypage'
+import sendHistory from 'components/mypage/send/sendHistory'
+import sendEssay from 'components/mypage/send/sendEssay'
+import sendOfficial from 'components/mypage/send/sendOfficial'
+import sendComment from 'components/mypage/send/sendComment'
+import bookHistory from 'components/mypage/book/bookHistory'
+import bookOA from 'components/mypage/book/bookOA'
+import bookOfficial from 'components/mypage/book/bookOfficial'
+import bookEssay from 'components/mypage/book/bookEssay'
+import likeHistory from 'components/mypage/like/likeHistory'
 import Notice from 'components/notice/notice'
 import Login from 'components/login'
 import Oa from 'components/notice/oa'
@@ -53,11 +62,11 @@ const routes = [
     component:Notice,
     children:[
       {
-        path: '/notice/oa',
+        path: 'oa',
         component:Oa
       },
       {
-        path: '/notice/official',
+        path: 'official',
         component: Official
       }
     ],
@@ -66,11 +75,41 @@ const routes = [
   {
     path:'/bbs',
     component: BBS,
-    // beforeEnter: login_state_check_mixin
+    beforeEnter: login_state_check_mixin
   },
   {
     path: '/mypage',
     component: MyPage,
+    children: [{
+      path: 'send',
+      component: sendHistory,
+      children: [{
+        path: 'essay',
+        component: sendEssay
+      },{
+        path: 'official',
+        component: sendOfficial
+      },{
+        path: 'comment',
+        component: sendComment
+      }]
+    },{
+      path: 'book',
+      component: bookHistory,
+      children:[{
+        path: 'oa',
+        component: bookOA
+      },{
+        path: 'official',
+        component: bookOfficial
+      },{
+        path: 'essay',
+        component: bookEssay
+      }]
+    },{
+      path: 'like',
+      component: likeHistory
+    }],
     beforeEnter: login_state_check_mixin
   },
   {

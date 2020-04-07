@@ -1,5 +1,5 @@
 <template>
-    <div id="notice" class="global-notice">
+    <div id="notice" class="global-notice" v-if="flag">
         <header>
             <div class="oa" :class="{active:selected===0}" @click="switchOa">
                 <span>
@@ -28,6 +28,10 @@ export default {
         }
     },
     computed: {
+        flag(){
+            if(!this.$store.state.user_info.basisInfo) return false
+            return true
+        },
         selected:{
             get:function(){
                 if(this.$route.path==='/notice/oa') return 0
