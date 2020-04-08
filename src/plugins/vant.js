@@ -16,7 +16,12 @@ import { Dialog } from 'vant';
 import { Loading } from 'vant';
 import { Uploader } from 'vant';
 import { Tab, Tabs } from 'vant';
+import { Popup } from 'vant';
+import { Collapse, CollapseItem } from 'vant';
 
+Vue.use(Collapse);
+Vue.use(CollapseItem);
+Vue.use(Popup);
 Vue.use(Tab);
 Vue.use(Tabs);
 Vue.use(Uploader);

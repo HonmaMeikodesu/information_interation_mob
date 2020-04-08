@@ -5,50 +5,7 @@
           <van-image :src="fullImgUrl" cover></van-image>
       </div>
     </van-overlay>
-    <van-dialog v-model="show" title="用户信息">
-        <div class="user-info-detail">
-            <div class="student-info" v-if="judgeStudent">
-                <div class="user-avatar">
-                    <van-image 
-                    :src="computeAvatar(other_info.avatar)"
-                    error-icon="user-circle-o"
-                    cover
-                    >
-                    </van-image>
-                </div>
-                <div class="user-id">
-                    <span class="user-id-content">{{other_info.id}}</span>
-                </div>
-                <div class="user-gender">
-                    <span class="user-gender-conten">{{other_info.info.gender}}</span>
-                </div>
-                <div class="user-major">
-                    <span class="user-major">{{other_info.info.major}}</span>
-                </div>
-                <div class="user-signature" v-if="other_info.signature&&other_info.signature!==null">
-                    <span class="user-signature-prefix">用户介绍:</span>
-                    <span class="user-signature-content">{{other_info.signature}}</span>
-                </div>
-            </div>
-            <div class="organization-info" v-else>
-                <div class="organization-avatar">
-                    <van-image 
-                    :src="computeAvatar(other_info.avatar_url)"
-                    error-icon="user-circle-o"
-                    >
-                    </van-image>
-                </div>
-                <div class="organization-name">
-                    <span class="organization-name-prefix">组织名称:</span>
-                    <span class="organization-name-content">{{other_info.organization_name}}</span>
-                </div>
-                <div class="organization-info">
-                    <span class="organization-info-prefix">组织介绍:</span>
-                    <span class="organization-info-content">{{other_info.organization_info}}</span>
-                </div>
-            </div>
-        </div>
-    </van-dialog>  
+    <otherUserInfo :show="show" :other_info="other_info" :other_identity="other_identity"></otherUserInfo> 
     <div class="essay-wrapper" v-for="item in list" :key="item.id">
         <div class="essay-id" v-show="false">{{item.id}}</div>
         <div class="essay-avatar">
@@ -172,6 +129,7 @@ import {request} from '../../request/http'
 import {Dialog} from 'vant'
 import {urlToBase64,base64toFile} from '../../utils/imgHandler'
 import {uploadImg} from '../../utils/qiniuUpload'
+import otherUserInfo from 'components/bbs/otherUserInfo'
 export default {
   data(){
       return{
@@ -180,7 +138,7 @@ export default {
           fullImgUrl: '',
           other_identity: '',
           other_info: {},
-          show: false,
+          show: {flag:false},
           essayToEdit: '',
           imgToUpdateList: [],
           essayIDOnUpdate: -1,
@@ -189,6 +147,9 @@ export default {
           historyImg: '',
           historyShow: false,
       }
+  },
+  components:{
+      otherUserInfo
   },
   props: ["list","now"],
   computed: {
@@ -433,11 +394,11 @@ export default {
           }).then(res=>{
               if(identity==='student') this.other_info = res.user_info
               else this.other_info = res.organization_basisInfo
-              this.show=true
+              this.show.flag=true
           }).catch(err=>{
               console.log(err)
               this.$toast.fail('操作失败')
-              this.show=false
+              this.show.flag=false
           })
       },
       iNeedMoreDetails(item){
@@ -575,10 +536,6 @@ export default {
             width 80%
             padding-top 20px
             margin 0 auto
-  .user-info-detail
-    *
-        padding 5px 0
-        text-align center
   .full-img-wrapper 
     display flex
     align-items center

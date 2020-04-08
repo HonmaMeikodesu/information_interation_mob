@@ -13,7 +13,7 @@
 export default {
   data(){
     return {
-      baseUrl: 'http://192.168.1.8:8080/'
+      baseUrl: 'http://192.168.1.7:8080/'
     }
   },
   props: ["url"],
