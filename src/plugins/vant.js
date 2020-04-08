@@ -18,7 +18,9 @@ import { Uploader } from 'vant';
 import { Tab, Tabs } from 'vant';
 import { Popup } from 'vant';
 import { Collapse, CollapseItem } from 'vant';
+import { Cell } from 'vant';
 
+Vue.use(Cell);
 Vue.use(Collapse);
 Vue.use(CollapseItem);
 Vue.use(Popup);

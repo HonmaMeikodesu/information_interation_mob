@@ -126,7 +126,7 @@
                 <van-tab class="like-history" title="赞过" to="/mypage/like"></van-tab>
             </van-tabs>
         </div>
-        <div class="user-stuff-choose">111
+        <div class="user-stuff-choose">
             <router-view></router-view>
         </div>
     </div>
