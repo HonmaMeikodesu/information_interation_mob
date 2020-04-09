@@ -8,21 +8,45 @@
       </van-tabs>
     </div>
     <div class="send-history-content">
-      <router-view></router-view>
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+        <router-view @needRefresh="onRefresh()" v-if="reRender"></router-view>
+      </van-pull-refresh>
     </div>
   </div>
 </template>
 <script>
+import { request } from '../../../request/http'
 export default {
   data(){
     return{
       sendHistorySelect:'1',
+      isLoading: false,
+      reRender: true,
     }
   },
   computed:{
     judgeOrganization(){
       if(this.$store.getters.identity==='student') return false
       return true
+    }
+  },
+  methods:{
+    onRefresh(){
+        request(true,{
+            method: 'get',
+            url: '/api/user/get_user_info'
+        }).then(res=>{
+            this.$store.state.user_info=res
+            this.isLoading=false
+            this.reRender=false
+            this.$nextTick(function(){
+              this.reRender=true
+            })
+        }).catch(err=>{
+            console.log(err)
+            this.$toast.fail('刷新失败')
+            this.isLoading=false
+        })
     }
   }
 }

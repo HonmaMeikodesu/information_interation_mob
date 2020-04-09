@@ -23,7 +23,7 @@
       <oasearchresult class="search-result" @show-result-detail="showOaDetailInResult($event)" @searchresultclose="searchResultShow=$event" v-show="searchResultShow" v-bind:search-list="searchList"></oasearchresult>
     </transition>
     <transition name="slide">
-      <oadetail :id="id" v-show="oaDetailShow" @detailclose="oaDetailShow=$event" class="oa-detail"></oadetail>
+      <oadetail :id="id" v-show="oaDetailShow" @detailclose="oaDetailShow=$event"></oadetail>
     </transition>
   </div>
 </template>
@@ -183,16 +183,6 @@
         left 0
         right 0
         z-index 50
-        background-color #f3f4f6
-        overflow auto
-    .oa-detail
-        position fixed
-        width 100%
-        top 0
-        bottom 50px
-        left 0
-        right 0
-        z-index 99
         background-color #f3f4f6
         overflow auto
     .oa-list

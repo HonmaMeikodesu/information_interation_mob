@@ -8,7 +8,7 @@ export function request(with_login_state,option){
             login_state = JSON.parse(login_state)
             let skey = login_state.skey
             let identity = login_state.identity
-            option.headers = {}
+            if(!option.headers) option.headers = {}
             option.headers.skey = skey
             option.headers.identity = identity
         }

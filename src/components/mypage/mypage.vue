@@ -1,6 +1,6 @@
 <template>
     <div id='my-page' v-if="flag">
-        <div class="test-client-height" style="position:fixed;top:0;bottom:0;width:100%;z-index=-999" ></div>
+        <div class="test-client-height global-notice" style="position:fixed;top:0;bottom:0;width:100%;z-index=-999" ></div>
         <otherUserInfo :show="show" :other_info="other_info" :other_identity="other_identity"></otherUserInfo>
         <div class="my-page-header">
             <span class="my-page-title">我的信息</span>
@@ -128,6 +128,7 @@
         </div>
         <div class="user-stuff-choose">
             <router-view></router-view>
+            <div style="height:50px"></div> <!--防止router-view渲染出的组件被footer覆盖-->
         </div>
     </div>
 </template>
@@ -195,8 +196,10 @@ export default {
             uploadAvatar(nickname,file.file).then(res=>{
                 console.log(res)
                 let avatar_url = res.key.concat(':',res.key.hash)
-                if(this.$store.getters.organization_basisInfo)
+                if(this.$store.getters.organization_basisInfo){
                     this.$store.getters.organization_basisInfo.avatar_url=avatar_url
+                    return
+                }
                 this.$store.getters.basisInfo.avatar_url=avatar_url
                 this.$toast.$free_success('上传完毕')
             }).catch(err=>{
@@ -296,7 +299,7 @@ export default {
         switchEditSignatureSelected(){
             this.signatureToUpdate=this.$store.state.user_info.basisInfo.signature || this.$store.getters.organization_basisInfo.organization_info
             this.editSignatureSelected=true
-        }
+        },
     },
     mixins: [loading_mixin]
 }
@@ -370,7 +373,7 @@ export default {
                         line-height 30px
             .user-signature
                 display flex
-                padding 0px 10px
+                padding-left 10px
                 width 100%
                 .user-signature-title
                     flex 0 0 65px

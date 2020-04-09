@@ -19,7 +19,9 @@ import { Tab, Tabs } from 'vant';
 import { Popup } from 'vant';
 import { Collapse, CollapseItem } from 'vant';
 import { Cell } from 'vant';
+import { Divider } from 'vant';
 
+Vue.use(Divider);
 Vue.use(Cell);
 Vue.use(Collapse);
 Vue.use(CollapseItem);

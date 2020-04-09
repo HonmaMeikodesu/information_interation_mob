@@ -20,7 +20,7 @@
         </van-list>
         </van-pull-refresh>
         <transition name="slide">
-          <officialdetail :url="url" v-show="officialDetailShow" @detailclose="officialDetailShow=$event" class="official-detail"></officialdetail>
+          <officialdetail :url="url" v-show="officialDetailShow" @detailclose="officialDetailShow=$event"></officialdetail>
         </transition>
         <transition name="slide">
           <officialsearchresult class="search-result" @show-result-detail="showOfficialDetailInResult($event)" @searchresultclose="searchResultShow=$event" v-show="searchResultShow" v-bind:search-list="searchList"></officialsearchresult>
@@ -186,16 +186,6 @@
         left 0
         right 0
         z-index 50
-        background-color #f3f4f6
-        overflow auto
-    .official-detail
-        position fixed
-        width 100%
-        top 0
-        bottom 50px
-        left 0
-        right 0
-        z-index 99
         background-color #f3f4f6
         overflow auto
     .official-list

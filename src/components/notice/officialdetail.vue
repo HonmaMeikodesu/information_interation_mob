@@ -61,6 +61,15 @@ export default {
 </script>
 <style lang="stylus" scoped>
 #detail
+   position fixed
+   width 100%
+   top 0
+   bottom 50px
+   left 0
+   right 0
+   z-index 99
+   background-color #f3f4f6
+   overflow auto
   .official-header
     background-color #1989fa
     .close
