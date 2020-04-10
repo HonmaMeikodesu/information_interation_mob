@@ -54,6 +54,10 @@ export default {
             this.$router.push('/notice/official')
         }
     },
+    created(){
+      if(Object.keys(this.$store.state.oa_socket).length === 0)
+        this.$store.commit('refresh_socket')
+    },
     mixins: [loading_mixin],
 }
 </script>

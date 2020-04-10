@@ -82,7 +82,6 @@ export default {
       })
     },
     deleteEssay(id){
-      console.log(id)
       Dialog.confirm({
       title: '确认提示',
       message: '您确定要删除该文章吗'

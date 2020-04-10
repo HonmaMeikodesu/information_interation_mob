@@ -4,7 +4,7 @@
         <otherUserInfo :show="show" :other_info="other_info" :other_identity="other_identity"></otherUserInfo>
         <div class="my-page-header">
             <span class="my-page-title">我的信息</span>
-            <van-icon name="setting-o" class="my-page-setting" size="20px" color="#359ce7"/>
+            <van-icon name="setting-o" class="my-page-setting" size="20px" color="#359ce7" @click="optionSelected=true"/>
         </div>
         <div class="van-hairline--bottom"></div>
         <div class="my-page-user-info">
@@ -88,7 +88,7 @@
                     <div class="user-full-info">
                         <van-button round type="info" size="small">个人信息</van-button>
                     </div>
-                    <div class="user-push">
+                    <div class="user-push" @click="notifySelected=true">
                         <van-icon name="chat-o" class="user-message-bucket" size="30px"/>
                         <span>消息推送</span>
                     </div>
@@ -130,6 +130,14 @@
             <router-view></router-view>
             <div style="height:50px"></div> <!--防止router-view渲染出的组件被footer覆盖-->
         </div>
+        <transition name="van-slide-right">
+            <keep-alive>
+                <serverNotify v-show="notifySelected" @closeNotify="notifySelected=$event"></serverNotify>
+            </keep-alive>
+        </transition>
+        <transition name="van-slide-left">
+            <personnalOption v-show="optionSelected" @closeOption="optionSelected=$event"></personnalOption>
+        </transition>
     </div>
 </template>
 <script>
@@ -137,6 +145,8 @@ import loading_mixin from 'components/loading'
 import {uploadAvatar} from '../../utils/qiniuUpload'
 import otherUserInfo from 'components/bbs/otherUserInfo'
 import {request} from '../../request/http'
+import serverNotify from 'components/mypage/serverNotify'
+import personnalOption from 'components/mypage/option'
 export default {
     name: 'mypage',
     data(){
@@ -150,10 +160,14 @@ export default {
             show: {flag:false},
             editSignatureSelected: false,
             signatureToUpdate: '',
+            notifySelected: false,
+            optionSelected: false
         }
     },
     components:{
-        otherUserInfo
+        otherUserInfo,
+        serverNotify,
+        personnalOption
     },
     computed:{
       userTopSelect(){
@@ -200,7 +214,6 @@ export default {
             this.$toast.$loading('上传中')
             let nickname = this.$options.computed.userNickname.call(this)
             uploadAvatar(nickname,file.file).then(res=>{
-                console.log(res)
                 let avatar_url = res.key.concat(':',res.key.hash)
                 if(this.$store.getters.organization_basisInfo){
                     this.$store.getters.organization_basisInfo.avatar_url=avatar_url
@@ -245,7 +258,6 @@ export default {
         },
         showUserInfo(identity,user_id){
             this.other_identity=identity
-            console.log(identity+ ' ' +user_id)
             request(true,{
                 method: 'get',
                 url: '/api/user/get_others_info',
@@ -306,6 +318,10 @@ export default {
             this.signatureToUpdate=this.$store.state.user_info.basisInfo.signature || this.$store.getters.organization_basisInfo.organization_info
             this.editSignatureSelected=true
         },
+    },
+    created(){
+      if(Object.keys(this.$store.state.oa_socket).length === 0)
+        this.$store.commit('refresh_socket')
     },
     mixins: [loading_mixin]
 }

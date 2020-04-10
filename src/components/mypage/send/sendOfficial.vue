@@ -86,7 +86,7 @@ export default {
     deleteOfficial(id){
       Dialog.confirm({
       title: '确认提示',
-      message: '该评论将被删除'
+      message: '该推文将被删除'
       }).then(() => {
         this.$toast.loading({
             message: '删除中',
@@ -132,6 +132,9 @@ export default {
         this.$toast.$free_success('上传完成')
         this.officialDetailShow=false
         this.$emit('needRefresh')
+        this.$store.state.official_socket.emit('send_official',
+        {user_id:this.$store.getters.organization_basisInfo.organization_name,official_url:this.newOfficialUrl})
+        this.newOfficialUrl=''
       }).catch(err=>{
         console.log(err)
         this.$toast.$free_fail('上传失败')

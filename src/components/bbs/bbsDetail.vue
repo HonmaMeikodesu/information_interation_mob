@@ -118,7 +118,6 @@ export default {
     },
     showUserInfo(identity,user_id){
         this.other_identity=identity
-        console.log(identity+ ' ' +user_id)
         request(true,{
             method: 'get',
             url: '/api/user/get_others_info',
@@ -237,8 +236,11 @@ export default {
         this.$toast.clear()
         this.$options.methods.loadMore.call(this,this.list[0].id)
         this.$toast.success('发送成功')
-        this.commentToSend=''
         this.$emit('commentIncrease',this.list[0].id)
+        let nickname = (identity==='student')?this.$store.getters.basisInfo.nickname:this.$store.getters.organization_basisInfo.organization_name
+        this.$store.state.moment_socket.emit('send_comment',
+        {nickname,content:this.commentToSend,essay_id:this.list[0].id})
+        this.commentToSend=''
       }).catch(err=>{
         console.log(err)
         this.$toast.clear()

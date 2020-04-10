@@ -186,11 +186,18 @@
                     }
                 }).then(res=>{
                     if(this.imgList.length===0) {
+                        let id = res.id
                         this.$toast.clear()
                         this.$toast.success('发送完毕')
                         this.sendEssaySelected=false
-                        this.essayToSend=''
                         this.$options.methods.onRefresh.call(this)
+                        this.$store.state.moment_socket.emit('send_essay',
+                        {identity:this.$store.getters.identity, 
+                        user_id:(this.$store.getters.identity==='student')?this.$store.getters.basisInfo.id:this.$store.getters.organization_basisInfo.organization_name, 
+                        nickname:(this.$store.getters.identity==='student')?this.$store.getters.basisInfo.nickname:this.$store.getters.organization_basisInfo.organization_name, 
+                        content: this.essayToSend, 
+                        essay_id:id})
+                        this.essayToSend=''
                         return
                     }
                     let id = res.id
@@ -203,6 +210,13 @@
                         this.$toast.success('发送完毕')
                         this.sendEssaySelected=false
                         this.$options.methods.onRefresh.call(this)
+                        this.$store.state.moment_socket.emit('send_essay',
+                        {identity:this.$store.getters.identity, 
+                        user_id:(this.$store.getters.identity==='student')?this.$store.getters.basisInfo.id:this.$store.getters.organization_basisInfo.organization_name, 
+                        nickname:(this.$store.getters.identity==='student')?this.$store.getters.basisInfo.nickname:this.$store.getters.organization_basisInfo.organization_name, 
+                        content: this.essayToSend, 
+                        essay_id:id})
+                        this.essayToSend=''
                     }).catch(err=>{
                         console.log(err)
                         // 文章图片发送失败，自动将整篇文章删除(删除失败就算了)
@@ -259,6 +273,10 @@
                     this.$toast.$fail('搜索失败')
                 })
             }
+        },
+        created(){
+        if(Object.keys(this.$store.state.oa_socket).length === 0)
+            this.$store.commit('refresh_socket')
         },
         mixins: [loading_mixin]
     }

@@ -338,7 +338,6 @@ export default {
                   }
                   index++
               }
-              console.log(index+ ' ' +this.$store.getters.liked.moments)
               this.$store.getters.liked.moments.splice(index,1)
               item.thumbsup_num--
           }).catch(err=>{
@@ -383,7 +382,6 @@ export default {
       },
       showUserInfo(identity,user_id){
           this.other_identity=identity
-          console.log(identity+ ' ' +user_id)
           request(true,{
               method: 'get',
               url: '/api/user/get_others_info',
