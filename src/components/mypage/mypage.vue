@@ -121,8 +121,8 @@
         </div> 
         <div class="user-stuff-main-select">
             <van-tabs v-model="userTopSelect" title-active-color="rgb(53,156,231)" color="rgb(53,156,231)">
-                <van-tab class="send-history" title="发过" to="/mypage/send"></van-tab>
-                <van-tab class="book-history" title="收藏" to="/mypage/book"></van-tab>
+                <van-tab class="send-history" title="发过" to="/mypage/send/essay"></van-tab>
+                <van-tab class="book-history" title="收藏" to="/mypage/book/oa"></van-tab>
                 <van-tab class="like-history" title="赞过" to="/mypage/like"></van-tab>
             </van-tabs>
         </div>
@@ -141,7 +141,6 @@ export default {
     name: 'mypage',
     data(){
         return{
-            userTopSelect:1,
             followFanshow: false,
             followSelected: false,
             followActive: ['0'],
@@ -157,6 +156,13 @@ export default {
         otherUserInfo
     },
     computed:{
+      userTopSelect(){
+          if(/^\/mypage\/send/.test(this.$route.path))
+            return 0
+          else if(/^\/mypage\/book/.test(this.$route.path))
+            return 1
+          else return 2
+      },
       flag(){
           if(!this.$store.state.user_info.basisInfo) return false
           return true

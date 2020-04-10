@@ -10,7 +10,7 @@
       <van-tabbar-item replace to="/bbs" icon="home-o">
         信息
       </van-tabbar-item>
-      <van-tabbar-item replace to="/mypage" icon="user-o">
+      <van-tabbar-item replace to="/mypage/send/essay" icon="user-o">
         我的
       </van-tabbar-item>
     </van-tabbar>

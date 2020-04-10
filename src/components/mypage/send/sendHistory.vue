@@ -19,12 +19,18 @@ import { request } from '../../../request/http'
 export default {
   data(){
     return{
-      sendHistorySelect:'1',
       isLoading: false,
       reRender: true,
     }
   },
   computed:{
+    sendHistorySelect(){
+      if(/^\/mypage\/send\/essay/.test(this.$route.path))
+        return 0
+      else if(/^\/mypage\/send\/comment/.test(this.$route.path))
+        return 1
+      else return 2
+    },
     judgeOrganization(){
       if(this.$store.getters.identity==='student') return false
       return true
