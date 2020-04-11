@@ -10,35 +10,38 @@
       <div class="comment-content" @click="sendCommentSelected=false">
         <bbsItem :list="list" :now="now" @essayDeleted="closeDetailAndRefresh" @updateEssayAndRefresh='updateEssayAndRefresh'></bbsItem>
         <div class="comment-wrapper">
-          <div class="comment" v-for="item in comment" :key="item.id">
-            <div class="comment-id" id="item.id" style="display:none"></div>
-            <div class="comment-user-avatar">
-              <van-image
-              :src="computeAvatar(item.comment_user_avatar)"
-              @click="showUserInfo(item.comment_user_identity,item.comment_user_id)"
-              error-icon="user-circle-o"
-              cover
-              width="65"
-              height="65"
-              ></van-image>
-              <div class="comment-user-name">
-                <span>{{item.comment_user_nickname}}</span>
+          <div v-for="item in comment" :key="item.id">
+            <div class="comment">
+              <div class="comment-id" id="item.id" style="display:none"></div>
+              <div class="comment-user-avatar">
+                <van-image
+                :src="computeAvatar(item.comment_user_avatar)"
+                @click="showUserInfo(item.comment_user_identity,item.comment_user_id)"
+                error-icon="user-circle-o"
+                cover
+                width="65"
+                height="65"
+                ></van-image>
+                <div class="comment-user-name">
+                  <span>{{item.comment_user_nickname}}</span>
+                </div>
+              </div>
+              <div class="comment-main">
+                <div class="comment-time">
+                  <span>{{computePublishTime(item.updated_at)}}</span>
+                </div>
+                <div class="comment-content">
+                  <span>
+                    {{item.comment_content}}
+                  </span>
+                </div>
+              </div>
+              <div class="delete" @click="deleteComment(item.id)" v-if="judgeCommentOwner(item.comment_user_identity,item.comment_user_id)">
+                  <van-icon name="cross" color="red"/>
+                  <span>删除评论</span>
               </div>
             </div>
-            <div class="comment-main">
-              <div class="comment-time">
-                <span>{{computePublishTime(item.updated_at)}}</span>
-              </div>
-              <div class="comment-content">
-                <span>
-                  {{item.comment_content}}
-                </span>
-              </div>
-            </div>
-            <div class="delete" @click="deleteComment(item.id)" v-if="judgeCommentOwner(item.comment_user_identity,item.comment_user_id)">
-                <van-icon name="cross" color="red"/>
-                <span>删除评论</span>
-            </div>
+            <van-divider style="margin:0"/>
           </div>
           <div class="load-more">
             <div v-if="loadMoreSelected">
@@ -307,7 +310,6 @@ export default {
         .comment
           padding 10px 0
           display flex
-          border-bottom 1px inset gray
           .comment-user-avatar
             padding 5px
             flex 0

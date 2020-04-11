@@ -6,70 +6,74 @@
       </div>
     </van-overlay>
     <otherUserInfo :show="show" :other_info="other_info" :other_identity="other_identity"></otherUserInfo> 
-    <div class="essay-wrapper" v-for="item in list" :key="item.id">
-        <div class="essay-id" v-show="false">{{item.id}}</div>
-        <div class="essay-avatar">
-            <van-image
-            width="65"
-            height="65"
-            round
-            fit="cover"
-            error-icon="user-circle-o"
-            :src="computeAvatar(item.essay_user_avatar)"
-            @click="showUserInfo(item.essay_user_identity,item.essay_user_id)"
-            />
-            <van-tag class="follow-status" size="medium" v-if="judgeFollow(item.essay_user_identity,item.essay_user_id)&&!juegeEssayOwner(item.essay_user_id,item.essay_user_identity)" color="#359ce7" @click="addFollow(item.essay_user_identity,item.essay_user_id)">+关注</van-tag>
-            <van-tag class="follow-status" type="success" size="medium" v-else-if="!juegeEssayOwner(item.essay_user_id,item.essay_user_identity)" @click="removeFollow(item.essay_user_identity,item.essay_user_id)">取关</van-tag>
-        </div>
-        <div class="essay-body">
-            <div class="essay-body-info">
-                <div class="essay-body-info-author-name">{{item.essay_user_nickname}}</div>
-                <div class="essay-body-info-time">{{computePublishTime(item.updated_at)}}</div>
-                <div class="essay-body-info-edited" v-if="(item.created_at==item.updated_at)&&juegeEssayOwner(item.essay_user_id,item.essay_user_identity)">
-                    <van-tag mark type="primary" class="essay-body-info-edited-history" @click="prepareToEditEssay(item.id,$event.target)">编辑该文章</van-tag>
+    <div v-for="item in list" :key="item.id">
+        <div class="essay-wrapper">
+            <div class="essay-id" v-show="false">{{item.id}}</div>
+            <div class="essay-avatar">
+                <van-image
+                width="65"
+                height="65"
+                round
+                fit="cover"
+                error-icon="user-circle-o"
+                :src="computeAvatar(item.essay_user_avatar)"
+                @click="showUserInfo(item.essay_user_identity,item.essay_user_id)"
+                />
+                <van-tag class="follow-status" size="medium" v-if="judgeFollow(item.essay_user_identity,item.essay_user_id)&&!juegeEssayOwner(item.essay_user_id,item.essay_user_identity)" color="#359ce7" @click="addFollow(item.essay_user_identity,item.essay_user_id)">+关注</van-tag>
+                <van-tag class="follow-status" type="success" size="medium" v-else-if="!juegeEssayOwner(item.essay_user_id,item.essay_user_identity)" @click="removeFollow(item.essay_user_identity,item.essay_user_id)">取关</van-tag>
+            </div>
+            <div class="essay-body">
+                <div class="essay-body-info">
+                    <div class="essay-body-info-author-name">{{item.essay_user_nickname}}</div>
+                    <div class="essay-body-info-time">{{computePublishTime(item.updated_at)}}</div>
+                    <div class="essay-body-info-edited" v-if="(item.created_at==item.updated_at)&&juegeEssayOwner(item.essay_user_id,item.essay_user_identity)">
+                        <van-tag mark type="primary" class="essay-body-info-edited-history" @click="prepareToEditEssay(item.id,$event.target)">编辑该文章</van-tag>
+                    </div>
+                    <div class="essay-body-info-edited" v-if="!(item.created_at==item.updated_at)">
+                        <span class="essay-body-info-edited-hint">已被编辑过</span>
+                        <van-tag mark type="primary" class="essay-body-info-edited-history" @click="showMeHistory(item.id)">查看编辑记录</van-tag>
+                    </div>
                 </div>
-                <div class="essay-body-info-edited" v-if="!(item.created_at==item.updated_at)">
-                    <span class="essay-body-info-edited-hint">已被编辑过</span>
-                    <van-tag mark type="primary" class="essay-body-info-edited-history" @click="showMeHistory(item.id)">查看编辑记录</van-tag>
+                <div class="essay-body-content">
+                    <div class="essay-body-content-words" @click="iNeedMoreDetails(item)">{{item.essay_content}}</div>
+                </div>
+                <div class="essay-body-image">
+                    <van-image 
+                    v-for="img in filterImgArr(item.essay_user_image_url)" 
+                    :key="img"
+                    :src="imgServerUrl.concat(img)"
+                    width="100px"
+                    height="100px"
+                    cover
+                    @click="switchFullImg(imgServerUrl.concat(img))"
+                    >
+                    </van-image>
+                </div>
+                <div class="essay-status">
+                    <div class="thumbs-up">
+                        <van-icon name="thumb-circle-o" v-if="judgeThumbsUp(item.id)" @click="addThumbsUp(item)"/>
+                        <van-icon name="thumb-circle" v-else @click="removeThumbsUp(item)"/>
+                        <span>{{item.thumbsup_num}}</span>
+                    </div>
+                    <div class="booked">
+                        <van-icon name="star-o" v-if="judgeBooked(item.id)" @click="addBooked(item)" />
+                        <van-icon name="star" v-else @click="removeBooked(item)" />
+                        <span>{{item.bookmarked_num}}</span>
+                    </div>
+                    <div class="comment">
+                        <van-icon name="comment-circle-o" @click="iNeedMoreDetails(item)"/>
+                        <span>{{item.review_num}}</span>
+                    </div>
+                    <div class="delete" @click="deleteEssay(item.id)" v-if="juegeEssayOwner(item.essay_user_id,item.essay_user_identity)">
+                        <van-icon name="cross" color="red"/>
+                        <span>删除文章</span>
+                    </div>
                 </div>
             </div>
-            <div class="essay-body-content">
-                <div class="essay-body-content-words" @click="iNeedMoreDetails(item)">{{item.essay_content}}</div>
-            </div>
-            <div class="essay-body-image">
-                <van-image 
-                v-for="img in filterImgArr(item.essay_user_image_url)" 
-                :key="img"
-                :src="imgServerUrl.concat(img)"
-                width="100px"
-                height="100px"
-                cover
-                @click="switchFullImg(imgServerUrl.concat(img))"
-                >
-                </van-image>
-            </div>
-            <div class="essay-status">
-                <div class="thumbs-up">
-                    <van-icon name="thumb-circle-o" v-if="judgeThumbsUp(item.id)" @click="addThumbsUp(item)"/>
-                    <van-icon name="thumb-circle" v-else @click="removeThumbsUp(item)"/>
-                    <span>{{item.thumbsup_num}}</span>
-                </div>
-                <div class="booked">
-                    <van-icon name="star-o" v-if="judgeBooked(item.id)" @click="addBooked(item)" />
-                    <van-icon name="star" v-else @click="removeBooked(item)" />
-                    <span>{{item.bookmarked_num}}</span>
-                </div>
-                <div class="comment">
-                    <van-icon name="comment-circle-o" @click="iNeedMoreDetails(item)"/>
-                    <span>{{item.review_num}}</span>
-                </div>
-                <div class="delete" @click="deleteEssay(item.id)" v-if="juegeEssayOwner(item.essay_user_id,item.essay_user_identity)">
-                    <van-icon name="cross" color="red"/>
-                    <span>删除文章</span>
-                </div>
-            </div>
-        </div>
-    </div> 
+        </div> 
+        <van-divider style="margin:0"/>
+    </div>
+
     <transition name="van-slide-left">
         <div class="send-essay" v-show="editEssaySelected">
             <div class="send-essay-header">
@@ -553,9 +557,6 @@ export default {
     display flex
     background-color white
     padding 10px
-    border-bottom 1px solid gray
-    $:last-child
-      border-bottom 0px
     .essay-avatar
         flex 0 0 65px
         .follow-status
