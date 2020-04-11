@@ -116,6 +116,11 @@ const routes = [
     path: '/login',
     component: Login,
     beforeEnter: refresh_skey_mixin
+  },
+  {
+    path: '/',
+    component: Login,
+    beforeEnter: refresh_skey_mixin
   }
 ]
 
