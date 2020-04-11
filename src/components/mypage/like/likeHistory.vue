@@ -24,8 +24,8 @@
                 <span>{{dateFormat(item.updated_at)}}</span>
               </div>
             </div>
-            <div class="delete-essay" v-if="judgeEssayOwner(item.essay_user_id,item.essay_user_identity)">
-              <van-button type="danger" size="mini" @click.stop="deleteEssay(item.id)">删除</van-button>
+            <div class="remove-like">
+              <van-button type="danger" size="mini" @click.stop="removeLike(item)">取消点赞</van-button>
             </div>
           </div>
           <van-divider />
@@ -40,7 +40,6 @@
 <script>
 import bbsDetail from 'components/bbs/bbsDetail'
 import { request } from '../../../request/http'
-import {Dialog} from 'vant'
 export default {
   data(){
     return{
@@ -109,38 +108,26 @@ export default {
             this.isLoading=false
         })
     },
-    deleteEssay(id){
-      Dialog.confirm({
-      title: '确认提示',
-      message: '您确定要删除该文章吗'
-      }).then(() => {
-        this.$toast.loading({
-            message: '删除中',
-            forbidClick: true,
-            duration: 0
-        })
-        request(true,{
-            method: 'get',
-            url: '/api/moment/delete_essay',
-            params:{
-                id
-            }
-        }).then(()=>{
-            let index = 0
-            for(let item of this.essayList){
-                if(item.id==id) break
-                index++
-            }
-            this.essayList.splice(index,1)
-            this.$toast.clear()
-        }).catch(err=>{
-            console.log(err)
-            this.$toast.clear()
-            this.$toast.fail('操作失败')
-        })
-      }).catch(() => {
-      // on cancel
-      });
+    removeLike(item){
+      request(true,{
+          method: 'get',
+          url: '/api/moment/like',
+          params: {
+              moment_id: item.id
+          }
+      }).then(()=>{
+          let index = 0
+          for(let i of this.$store.getters.liked.moments){
+              if(i.id==item.id){
+                  break
+              }
+              index++
+          }
+          this.$store.getters.liked.moments.splice(index,1)
+      }).catch(err=>{
+          console.log(err)
+          this.$toast.fail('操作失败')
+      })
     }
   }
 }
