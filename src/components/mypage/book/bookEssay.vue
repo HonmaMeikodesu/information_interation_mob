@@ -1,26 +1,28 @@
 <template>
   <div id="book-essay-history">
-    <div class="essay-wrapper">
-      <div class="essay-body" v-for="item in essayList" :key="item.id" @click="needMoreDetail(item)">
-        <div class="essay-content van-ellipsis">{{item.essay_content}}</div>
-        <div class="essay-status">
-          <div class="user-avatar">
-            <van-image width="25" height="25" round fit="cover" error-icon="user-circle-o"
-              :src="computeAvatar(item.essay_user_avatar)" />
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <div class="essay-wrapper">
+        <div class="essay-body" v-for="item in essayList" :key="item.id" @click="needMoreDetail(item)">
+          <div class="essay-content van-ellipsis">{{item.essay_content}}</div>
+          <div class="essay-status">
+            <div class="user-avatar">
+              <van-image width="25" height="25" round fit="cover" error-icon="user-circle-o"
+                :src="computeAvatar(item.essay_user_avatar)" />
+            </div>
+            <div class="user-nickname">
+              {{item.essay_user_nickname}}
+            </div>
+            <div class="essay-time">
+              {{dateFormat(item.updated_at)}}
+            </div>
+            <div class="remove-essay">
+              <van-button type="danger" size="mini" @click.stop="removeBooked(item)">取消收藏</van-button>
+            </div>
           </div>
-          <div class="user-nickname">
-            {{item.essay_user_nickname}}
-          </div>
-          <div class="essay-time">
-            {{dateFormat(item.updated_at)}}
-          </div>
-          <div class="remove-essay">
-            <van-button type="danger" size="mini" @click.stop="removeBooked(item)">取消收藏</van-button>
-          </div>
+          <van-divider />
         </div>
-        <van-divider />
       </div>
-    </div>
+    </van-pull-refresh>
     <transition name="van-slide-down">
       <bbsDetail :list="[essay]" :comment="comment" :now="now" v-show="detailShow" @closeDetailAndRefresh="closeDetailAndRefresh" @updateEssayAndRefresh='updateEssayAndRefresh' @closedetail="detailShow=$event"></bbsDetail>
     </transition>
@@ -37,6 +39,7 @@ import bbsDetail from 'components/bbs/bbsDetail'
         comment:[],
         essay:{},
         now: new Date(),
+        isLoading: false,
       }
     },
     components:{
@@ -98,6 +101,20 @@ import bbsDetail from 'components/bbs/bbsDetail'
       updateEssayAndRefresh(){
         this.$emit('needRefresh')
       },
+      onRefresh(){
+        request(true,{
+            method: 'get',
+            url: '/api/user/get_user_info'
+        }).then(res=>{
+            this.$store.state.user_info=res
+            this.isLoading=false
+            this.$emit('needRefresh')
+        }).catch(err=>{
+            console.log(err)
+            this.$toast.fail('刷新失败')
+            this.isLoading=false
+        })
+      }
     }
   }
 </script>

@@ -86,7 +86,7 @@
                 </div>
                 <div class="user-full-info-push">
                     <div class="user-full-info">
-                        <van-button round type="info" size="small">个人信息</van-button>
+                        <van-button round type="info" size="small" @click="showUserInfo()">个人信息</van-button>
                     </div>
                     <div class="user-push" @click="notifySelected=true">
                         <van-icon name="chat-o" class="user-message-bucket" size="30px"/>
@@ -256,7 +256,9 @@ export default {
             this.followFanshow=true
             this.followSelected=false
         },
-        showUserInfo(identity,user_id){
+        showUserInfo(){
+            let identity = this.$store.getters.identity
+            let user_id = (identity==='student')?this.$store.getters.basisInfo.id:this.$store.getters.organization_basisInfo.organization_name
             this.other_identity=identity
             request(true,{
                 method: 'get',

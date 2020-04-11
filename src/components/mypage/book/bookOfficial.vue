@@ -1,22 +1,24 @@
 <template>
   <div id="book-official-history">
-    <div class="official-wrapper">
-      <div class="official-body" v-for="item in officialList" :key="item.id" @click="needMoreDetail(item.official_url)">
-        <div class="official-content van-ellipsis">{{item.official_title}}</div>
-        <div class="official-status">
-          <div class="user-nickname">
-            {{item.organization_name}}
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <div class="official-wrapper">
+        <div class="official-body" v-for="item in officialList" :key="item.id" @click="needMoreDetail(item.official_url)">
+          <div class="official-content van-ellipsis">{{item.official_title}}</div>
+          <div class="official-status">
+            <div class="user-nickname">
+              {{item.organization_name}}
+            </div>
+            <div class="official-time">
+              {{dateFormat(item.updated_at)}}
+            </div>
+            <div class="remove-official">
+              <van-button type="danger" size="mini" @click.stop="removeBooked(item)">取消收藏</van-button>
+            </div>
           </div>
-          <div class="official-time">
-            {{dateFormat(item.updated_at)}}
-          </div>
-          <div class="remove-official">
-            <van-button type="danger" size="mini" @click.stop="removeBooked(item)">取消收藏</van-button>
-          </div>
+          <van-divider />
         </div>
-        <van-divider />
       </div>
-    </div>
+    </van-pull-refresh>
     <transition name="van-slide-down">
       <officialdetail :url="url" v-show="officialDetailShow" @detailclose="officialDetailShow=$event"></officialdetail>
     </transition>
@@ -31,6 +33,7 @@ import officialdetail from 'components/notice/officialdetail'
         url:'',
         officialList: this.$store.getters.booked_official.booked_official,
         officialDetailShow: false,
+        isLoading: false
       }
     },
     components:{
@@ -67,6 +70,20 @@ import officialdetail from 'components/notice/officialdetail'
         this.url=url
         this.officialDetailShow=true
       },
+      onRefresh(){
+        request(true,{
+            method: 'get',
+            url: '/api/user/get_user_info'
+        }).then(res=>{
+            this.$store.state.user_info=res
+            this.isLoading=false
+            this.$emit('needRefresh')
+        }).catch(err=>{
+            console.log(err)
+            this.$toast.fail('刷新失败')
+            this.isLoading=false
+        })
+      }
     }
   }
 </script>

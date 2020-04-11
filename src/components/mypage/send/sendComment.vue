@@ -1,30 +1,32 @@
 <template>
   <div id="send-comment-history">
-    <div class="comment-wrapper">
-      <div class="comment-body" v-for="item in commentList" :key="item.id" @click="needMoreDetail(item)">
-        <div class="comment-time">{{dateFormat(item.commentPublishedTime)}}</div>
-        <div class="comment-content van-ellipsis">{{item.comment_content}}</div>
-        <div class="essay-wrapper">
-          <div class="essay-author-avatar">
-            <van-image
-            :src="computeAvatar(item.essay_user_avatar)"
-            error-icon="user-circle-o"
-            cover
-            width="80"
-            height="80"
-            ></van-image>
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <div class="comment-wrapper">
+        <div class="comment-body" v-for="item in commentList" :key="item.id" @click="needMoreDetail(item)">
+          <div class="comment-time">{{dateFormat(item.commentPublishedTime)}}</div>
+          <div class="comment-content van-ellipsis">{{item.comment_content}}</div>
+          <div class="essay-wrapper">
+            <div class="essay-author-avatar">
+              <van-image
+              :src="computeAvatar(item.essay_user_avatar)"
+              error-icon="user-circle-o"
+              cover
+              width="80"
+              height="80"
+              ></van-image>
+            </div>
+            <div class="essay-body">
+              <div class="essay-author-name">@{{item.essay_user_nickname}}</div>
+              <div class="essay-content van-ellipsis">{{item.essay_content}}</div>
+            </div>
           </div>
-          <div class="essay-body">
-            <div class="essay-author-name">@{{item.essay_user_nickname}}</div>
-            <div class="essay-content van-ellipsis">{{item.essay_content}}</div>
+          <div class="delete-comment">
+            <van-button type="danger" size="mini" @click.stop="deleteComment(item.commentID)">删除</van-button>
           </div>
+          <van-divider />
         </div>
-        <div class="delete-comment">
-          <van-button type="danger" size="mini" @click.stop="deleteComment(item.commentID)">删除</van-button>
-        </div>
-        <van-divider />
       </div>
-    </div>
+    </van-pull-refresh>
     <transition name="van-slide-down">
       <bbsDetail :list="[essay]" :comment="comment" :now="now" v-show="detailShow" @closeDetailAndRefresh="closeDetailAndRefresh" @updateEssayAndRefresh='updateEssayAndRefresh' @closedetail="detailShow=$event"></bbsDetail>
     </transition>
@@ -42,6 +44,7 @@ export default {
       comment: [],
       now: new Date(),
       detailShow: false,
+      isLoading: false,
     }
   },
   components:{
@@ -112,6 +115,20 @@ export default {
       }).catch(() => {
       // on cancel
       });
+    },
+    onRefresh(){
+      request(true,{
+          method: 'get',
+          url: '/api/user/get_user_info'
+      }).then(res=>{
+          this.$store.state.user_info=res
+          this.isLoading=false
+          this.$emit('needRefresh')
+      }).catch(err=>{
+          console.log(err)
+          this.$toast.fail('刷新失败')
+          this.isLoading=false
+      })
     }
   }
 }

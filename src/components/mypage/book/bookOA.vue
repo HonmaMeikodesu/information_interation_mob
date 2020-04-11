@@ -1,22 +1,24 @@
 <template>
   <div id="book-oa-history">
-    <div class="oa-wrapper">
-      <div class="oa-body" v-for="item in oaList" :key="item.id" @click="needMoreDetail(item.id)">
-        <div class="oa-content van-ellipsis">{{item.title}}</div>
-        <div class="oa-status">
-          <div class="department">
-            {{item.department}}
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <div class="oa-wrapper">
+        <div class="oa-body" v-for="item in oaList" :key="item.id" @click="needMoreDetail(item.id)">
+          <div class="oa-content van-ellipsis">{{item.title}}</div>
+          <div class="oa-status">
+            <div class="department">
+              {{item.department}}
+            </div>
+            <div class="oa-time">
+              {{dateFormat(item.publish_date)}}
+            </div>
+            <div class="remove-oa">
+              <van-button type="danger" size="mini" @click.stop="removeBooked(item)">取消收藏</van-button>
+            </div>
           </div>
-          <div class="oa-time">
-            {{dateFormat(item.publish_date)}}
-          </div>
-          <div class="remove-oa">
-            <van-button type="danger" size="mini" @click.stop="removeBooked(item)">取消收藏</van-button>
-          </div>
+          <van-divider />
         </div>
-        <van-divider />
       </div>
-    </div>
+    </van-pull-refresh>
     <transition name="van-slide-down">
       <oadetail :id="id" v-show="oaDetailShow" @detailclose="oaDetailShow=$event"></oadetail>
     </transition>
@@ -30,7 +32,8 @@ export default {
     return{
       oaList:this.$store.getters.booked_oa.booked_oa,
       id:'',
-      oaDetailShow:false
+      oaDetailShow:false,
+      isLoading:false,
     }
   },
   components:{
@@ -66,6 +69,20 @@ export default {
     needMoreDetail(id){
       this.id=id
       this.oaDetailShow=true
+    },
+    onRefresh(){
+      request(true,{
+          method: 'get',
+          url: '/api/user/get_user_info'
+      }).then(res=>{
+          this.$store.state.user_info=res
+          this.isLoading=false
+          this.$emit('needRefresh')
+      }).catch(err=>{
+          console.log(err)
+          this.$toast.fail('刷新失败')
+          this.isLoading=false
+      })
     }
   }
 }

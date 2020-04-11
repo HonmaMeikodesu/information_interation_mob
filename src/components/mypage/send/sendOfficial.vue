@@ -1,22 +1,24 @@
 <template>
   <div id="send-official-history">
-    <div class="official-wrapper">
-      <div class="official-body" v-for="item in offcialList" :key="item.id" @click="showOfficialDetail(item.official_url)">
-        <div class="official-title">
-          {{item.official_title}}
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <div class="official-wrapper">
+        <div class="official-body" v-for="item in offcialList" :key="item.id" @click="showOfficialDetail(item.official_url)">
+          <div class="official-title">
+            {{item.official_title}}
+          </div>
+          <div class="official-time">
+            {{dateFormat(item.updated_at)}}
+          </div>
+          <div class="update-official">
+            <van-button type="info" size="mini" @click.stop="updateOfficial(item.official_url)">更新</van-button>
+          </div>
+          <div class="delete-official">
+            <van-button type="danger" size="mini" @click.stop="deleteOfficial(item.id)">删除</van-button>
+          </div>
+          <van-divider />
         </div>
-        <div class="official-time">
-          {{dateFormat(item.updated_at)}}
-        </div>
-        <div class="update-official">
-          <van-button type="info" size="mini" @click.stop="updateOfficial(item.official_url)">更新</van-button>
-        </div>
-        <div class="delete-official">
-          <van-button type="danger" size="mini" @click.stop="deleteOfficial(item.id)">删除</van-button>
-        </div>
-        <van-divider />
       </div>
-    </div>
+    </van-pull-refresh>
     <div class="add-official">
       <van-icon class="add-official-icon" name="plus" size="50px" @click="addNewOfficialSelected=true"/>
       <div class="add-official-hint">添加新推文</div>
@@ -51,6 +53,7 @@ export default {
       offcialList:[],
       addNewOfficialSelected:false,
       newOfficialUrl:'',
+      isLoading: false,
     } 
   },
   components:{
@@ -138,6 +141,20 @@ export default {
       }).catch(err=>{
         console.log(err)
         this.$toast.$free_fail('上传失败')
+      })
+    },
+    onRefresh(){
+      request(true,{
+          method: 'get',
+          url: '/api/user/get_user_info'
+      }).then(res=>{
+          this.$store.state.user_info=res
+          this.isLoading=false
+          this.$emit('needRefresh')
+      }).catch(err=>{
+          console.log(err)
+          this.$toast.fail('刷新失败')
+          this.isLoading=false
       })
     }
   },
