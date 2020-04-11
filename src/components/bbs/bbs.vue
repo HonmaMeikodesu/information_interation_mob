@@ -60,6 +60,7 @@
     import {request} from '../../request/http'
     import {uploadImg} from '../../utils/qiniuUpload'
     import loading_mixin from 'components/loading'
+    import socket from 'components/socket'
     import bbsItem from 'components/bbs/bbsItem'
     import bbsDetail from 'components/bbs/bbsDetail'
     let row_start = 0
@@ -274,11 +275,7 @@
                 })
             }
         },
-        created(){
-        if(Object.keys(this.$store.state.oa_socket).length === 0)
-            this.$store.commit('refresh_socket')
-        },
-        mixins: [loading_mixin]
+        mixins: [loading_mixin,socket]
     }
 </script>
 <style lang="stylus">

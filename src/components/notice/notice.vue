@@ -21,6 +21,7 @@
 </template>
 <script>
 import loading_mixin from 'components/loading'
+import socket from 'components/socket'
 export default {
     data(){
         return{
@@ -54,11 +55,7 @@ export default {
             this.$router.push('/notice/official')
         }
     },
-    created(){
-      if(Object.keys(this.$store.state.oa_socket).length === 0)
-        this.$store.commit('refresh_socket')
-    },
-    mixins: [loading_mixin],
+    mixins: [loading_mixin,socket],
 }
 </script>
 <style lang="stylus" scoped>

@@ -89,7 +89,7 @@
                     localStorage.setItem("login_state",JSON.stringify(res))
                     this.$toast.clear()
                     this.$toast.success('登陆成功')
-                    this.$router.push('/mypage')
+                    this.$router.push('/mypage/send/essay')
                 }).catch(err=>{
                     console.log(err)
                     this.$toast.clear()

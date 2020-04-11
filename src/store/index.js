@@ -12,7 +12,11 @@ export default new Vuex.Store({
     oa_socket:{},
     official_socket:{},
     moment_socket:{},
-    offline_message:[]
+    socket_oa_list:[],
+    socket_official_list:[],
+    socket_essay_list:[],
+    socket_comment_list:[],
+    new_message_read: false,
   },
   getters: {
     identity: state=>{
@@ -79,7 +83,17 @@ export default new Vuex.Store({
         },
       })
       state.moment_socket.on('offline_message',data=>{
-        state.offline_message=data
+        state.new_message_read=true
+        data.forEach(item=>{
+          if(item.wechat_essay_comment){
+            state.socket_comment_list.push(item.wechat_essay_comment)
+          }else if(item.wechat_essay){
+            state.socket_essay_list.push(item.wechat_essay)
+          }else if(item.oa){
+            state.socket_oa_list.push(item.oa)
+          }else if(item.official_essay) 
+            state.socket_official_list.push(item.official_essay)
+        })
       })
       state.oa_socket=io(`${serverUrl}/oa`,{
         query: {
@@ -95,6 +109,27 @@ export default new Vuex.Store({
           identity
         },
       })
+    },
+    socket_state_listen(state){
+      state.moment_socket.on('commented',data=>{
+        state.socket_comment_list.push(data.wechat_essay_comment)
+        state.new_message_read=true
+      })
+      state.moment_socket.on('new_essay_received',data=>{
+        state.socket_essay_list.push(data.wechat_essay)
+        state.new_message_read=true
+      })
+      state.official_socket.on('new_official_received',data=>{
+        state.socket_official_list.push(data.official_essay)
+        state.new_message_read=true
+      })
+      state.oa_socket.on('new_oa_received',data=>{
+        state.socket_oa_list.push(data.oa)
+        state.new_message_read=true
+      })
+    },
+    new_message_read_toggle(state){
+      state.new_message_read=false
     }
   },
   actions: {

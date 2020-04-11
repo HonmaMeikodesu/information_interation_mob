@@ -89,7 +89,7 @@
                         <van-button round type="info" size="small" @click="showUserInfo()">个人信息</van-button>
                     </div>
                     <div class="user-push" @click="notifySelected=true">
-                        <van-icon name="chat-o" class="user-message-bucket" size="30px"/>
+                        <van-icon name="chat-o" class="user-message-bucket" size="30px" :dot="newMessageRead" @click="toggleReadStatus"/>
                         <span>消息推送</span>
                     </div>
                 </div>
@@ -142,6 +142,7 @@
 </template>
 <script>
 import loading_mixin from 'components/loading'
+import socket from 'components/socket'
 import {uploadAvatar} from '../../utils/qiniuUpload'
 import otherUserInfo from 'components/bbs/otherUserInfo'
 import {request} from '../../request/http'
@@ -200,9 +201,15 @@ export default {
       },
       userSignature(){
           return (this.$options.computed.identity.call(this)==='student')?this.$store.getters.basisInfo.signature:this.$store.getters.organization_basisInfo.organization_info
+      },
+      newMessageRead(){
+          return this.$store.state.new_message_read
       }
     },
     methods:{
+        toggleReadStatus(){
+            this.$store.commit('new_message_read_toggle')
+        },
         imgTypeCheck(file){
             if (file.type !== 'image/jpeg'&&file.type !== 'image/png') {
                 this.$toast.fail('请上传jpg,jpeg,png格式图片')
@@ -321,11 +328,7 @@ export default {
             this.editSignatureSelected=true
         },
     },
-    created(){
-      if(Object.keys(this.$store.state.oa_socket).length === 0)
-        this.$store.commit('refresh_socket')
-    },
-    mixins: [loading_mixin]
+    mixins: [loading_mixin,socket]
 }
 </script>
 <style lang="stylus" scoped>

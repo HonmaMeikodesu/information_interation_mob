@@ -69,10 +69,10 @@ import {request} from '../../request/http'
 export default {
   data(){
     return{
-      oaList:[],
-      officialList:[],
-      essayList:[],
-      commentList:[],
+      oaList:this.$store.state.socket_oa_list,
+      officialList:this.$store.state.socket_official_list,
+      essayList:this.$store.state.socket_essay_list,
+      commentList:this.$store.state.socket_comment_list,
       oaDetailShow: false,
       officialDetailShow: false,
       essay:{},
@@ -147,28 +147,6 @@ export default {
       const bottomSize = 48
       const clientHeight = this.$root.$el.getElementsByClassName('test-client-height')[0].offsetHeight
       this.$root.$el.getElementsByClassName('notify')[0].style.height=`${clientHeight-bottomSize}px`
-    })
-    this.$store.state.offline_message.forEach(item=>{
-      if(item.wechat_essay_comment){
-        this.commentList.push(item.wechat_essay_comment)
-      }else if(item.wechat_essay){
-        this.essayList.push(item.wechat_essay)
-      }else if(item.oa){
-        this.oaList.push(item.oa)
-      }else if(item.official_essay) 
-        this.officialList.push(item.official_essay)
-    })
-    this.$store.state.moment_socket.on('commented',data=>{
-      this.commentList.push(data.wechat_essay_comment)
-    })
-    this.$store.state.moment_socket.on('new_essay_received',data=>{
-      this.essayList.push(data.wechat_essay)
-    })
-    this.$store.state.official_socket.on('new_official_received',data=>{
-      this.officialList.push(data.official_essay)
-    })
-    this.$store.state.oa_socket.on('new_oa_received',data=>{
-      this.oaList.push(data.oa)
     })
   }
 }
