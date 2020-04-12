@@ -18,6 +18,7 @@
           <van-divider />
         </div>
       </div>
+      <div style="width:100%;text-align:center;color:gray;padding:5px">到底了喔~</div>
     </van-pull-refresh>
     <transition name="van-slide-down">
       <oadetail :id="id" v-show="oaDetailShow" @detailclose="oaDetailShow=$event"></oadetail>

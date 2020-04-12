@@ -22,6 +22,7 @@
           <van-divider />
         </div>
       </div>
+      <div style="width:100%;text-align:center;color:gray;padding:5px">到底了喔~</div>
     </van-pull-refresh>
     <transition name="van-slide-down">
       <bbsDetail :list="[essay]" :comment="comment" :now="now" v-show="detailShow" @closeDetailAndRefresh="closeDetailAndRefresh" @updateEssayAndRefresh='updateEssayAndRefresh' @closedetail="detailShow=$event"></bbsDetail>

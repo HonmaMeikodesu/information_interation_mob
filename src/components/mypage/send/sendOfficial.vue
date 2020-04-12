@@ -18,6 +18,7 @@
           <van-divider />
         </div>
       </div>
+      <div style="width:100%;text-align:center;color:gray;padding:5px">到底了喔~</div>
     </van-pull-refresh>
     <div class="add-official">
       <van-icon class="add-official-icon" name="plus" size="50px" @click="addNewOfficialSelected=true"/>
