@@ -268,7 +268,7 @@ export default {
                   message_id: item.id
               }
           }).then(()=>{
-              this.$store.getters.booked_moment.booked_moments.push(item)
+              this.$store.getters.booked_moment.booked_moments.splice(0,0,item)
               item.bookmarked_num++
           }).catch(err=>{
               console.log(err)
@@ -312,7 +312,7 @@ export default {
                   moment_id: item.id
               }
           }).then(()=>{
-              this.$store.getters.liked.moments.push(item)
+              this.$store.getters.liked.moments.splice(0,0,item)
               item.thumbsup_num++
           }).catch(err=>{
               console.log(err)

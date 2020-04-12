@@ -51,7 +51,7 @@
                                 "van-icon-star"
                             );
                             event.target.setAttribute("class", className);
-                            this.$store.state.user_info.booked_official.booked_official.push(official);
+                            this.$store.state.user_info.booked_official.booked_official.splice(0,0,official);
                         }
                     })
                     .catch(err => {

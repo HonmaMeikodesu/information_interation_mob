@@ -52,7 +52,7 @@
                             );
                             event.target.setAttribute("class", className);
                             this.$set(oa,'publish_date',oa.publishDate)
-                            this.$store.state.user_info.booked_oa.booked_oa.push(oa);
+                            this.$store.state.user_info.booked_oa.booked_oa.splice(0,0,oa);
                         }
                     })
                     .catch(err => {

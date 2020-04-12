@@ -49,7 +49,7 @@ export default {
           method: 'get',
           url: '/api/moment/book',
           params: {
-              from: 'moment',
+              from: 'oa',
               message_id: item.id
           }
       }).then(()=>{
