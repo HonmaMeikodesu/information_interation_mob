@@ -1,5 +1,5 @@
 <template>
-  <div id="detail">
+  <div id="detail" class="oa-detail-root">
     <div class="oa-header">
       <van-icon name="arrow-left" @click="closeDetail()" size="25px" class="close" color="white"/>
       <span class="header-title">OA详情</span>

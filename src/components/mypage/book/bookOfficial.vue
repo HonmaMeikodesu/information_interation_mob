@@ -85,6 +85,9 @@ import officialdetail from 'components/notice/officialdetail'
             this.isLoading=false
         })
       }
+    },
+    mounted(){
+      this.$el.getElementsByClassName('official-detail-root')[0].style.top='0px'
     }
   }
 </script>

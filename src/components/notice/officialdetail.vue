@@ -1,5 +1,5 @@
 <template>
-  <div id="detail">
+  <div id="detail" class="official-detail-root">
     <div class="official-header">
       <van-icon name="arrow-left" @click="closeDetail()" size="25px" class="close" color="white"/>
       <span class="header-title" @click="onLoad">推文详情(点我加载图片)</span>

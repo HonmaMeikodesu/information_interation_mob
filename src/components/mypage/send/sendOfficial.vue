@@ -169,6 +169,9 @@ export default {
       console.log(err)
       this.$toast.fail('加载失败')
     })
+  },
+  mounted(){
+    this.$el.getElementsByClassName('official-detail-root')[0].style.top='0px'
   }
 }
 </script>

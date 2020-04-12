@@ -85,6 +85,9 @@ export default {
           this.isLoading=false
       })
     }
+  },
+  mounted(){
+    this.$el.getElementsByClassName('oa-detail-root')[0].style.top='0px'
   }
 }
 </script>
