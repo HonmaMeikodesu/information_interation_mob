@@ -45,11 +45,11 @@ Vue.use(Field);
 Vue.use(Form);
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
-Vue.prototype.$toast.$loading = function(message){
+Vue.prototype.$toast.$loading = function(message,time=8){
   Vue.prototype.$toast.loading({
     message,
     forbidClick: true,
-    duration: 0
+    duration: time
   })
 }
 Vue.prototype.$toast.$free_success = function(message){

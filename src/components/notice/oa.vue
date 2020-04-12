@@ -2,8 +2,8 @@
   <div id="oa">
     <van-search v-model="searchkeyword" placeholder="请输入搜索关键词" class="search" @focus="onFocus" @blur="onBlur"
       @search="onSearch" />
+    <div v-show="searchSelected" class="searchOverLay"></div>
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <div v-show="searchSelected" class="searchOverLay"></div>
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" class="oa-list">
         <div v-for="item in list" :key="item.id">
           <div class="oa-wrapper">
@@ -36,8 +36,8 @@
   import oastar from 'components/common/oastar'
   import oadetail from 'components/notice/oadetail'
   import oasearchresult from 'components/notice/oasearchresult'
-  let row_start = 1;
-  let row_end = 20;
+  let row_start = 0;
+  let row_end = 19;
   export default {
     name: "oa",
     data() {
@@ -64,11 +64,7 @@
     },
     methods: {
       onLoad() {
-        this.$toast.loading({
-          message: "加载中",
-          forbidClick: true,
-          duration: 0
-        });
+        this.$toast.$loading('加载中')
         request(false, {
             method: "get",
             url: "api/oauth/oa/list",
@@ -95,8 +91,8 @@
           });
       },
       onRefresh() {
-        let newStart = 1
-        let newEnd = 20
+        let newStart = 0
+        let newEnd = 19
         request(false, {
             method: "get",
             url: "api/oauth/oa/list",

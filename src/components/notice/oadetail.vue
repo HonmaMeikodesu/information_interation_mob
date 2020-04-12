@@ -29,11 +29,7 @@ export default {
   props: ["id"],
   watch: {
     id: function(newID){
-      this.$toast.loading({
-        message:'加载中',
-        forbidClick: true,
-        duration: 0
-      })
+      this.$toast.$loading('加载中',5)
       request(false,{
         method: 'get',
         url: '/api/oauth/oa/details',
@@ -64,7 +60,7 @@ export default {
 #detail
    position fixed
    width 100%
-   top 0
+   top 30px
    bottom 50px
    left 0
    right 0

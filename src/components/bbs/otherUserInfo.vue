@@ -7,7 +7,9 @@
                     <van-image 
                     :src="computeAvatar(other_info.avatar)"
                     error-icon="user-circle-o"
-                    cover
+                    scale-down
+                    height="300px"
+                    width="300px"
                     >
                     </van-image>
                 </div>

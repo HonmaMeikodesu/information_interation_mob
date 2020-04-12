@@ -88,11 +88,7 @@ export default {
       title: '确认提示',
       message: '该评论将被删除'
       }).then(() => {
-        this.$toast.loading({
-            message: '删除中',
-            forbidClick: true,
-            duration: 0
-        })
+        this.$toast.$loading('删除中')
         request(true,{
             method: 'get',
             url: '/api/moment/delete_comment',

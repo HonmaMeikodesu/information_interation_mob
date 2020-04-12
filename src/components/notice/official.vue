@@ -2,8 +2,8 @@
     <div id="official">
         <van-search v-model="searchkeyword" placeholder="请输入搜索关键词" class="search" @focus="onFocus" @blur="onBlur"
         @search="onSearch" />
-        <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <div v-show="searchSelected" class="searchOverLay"></div>
+        <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" class="official-list">
             <div v-for="item in list" :key="item.id">
               <div class="official-wrapper">
@@ -71,11 +71,7 @@
         return created==updated?created:'更新于'+updated
       },
       onLoad() {
-        this.$toast.loading({
-          message: "加载中",
-          forbidClick: true,
-          duration: 0
-        });
+        this.$toast.$loading('加载中')
         request(true, {
             method: "get",
             url: "api/official/get_all_list",

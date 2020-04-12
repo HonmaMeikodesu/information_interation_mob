@@ -89,11 +89,7 @@ export default {
       title: '确认提示',
       message: '您确定要删除该文章吗'
       }).then(() => {
-        this.$toast.loading({
-            message: '删除中',
-            forbidClick: true,
-            duration: 0
-        })
+        this.$toast.$loading('删除中')
         request(true,{
             method: 'get',
             url: '/api/moment/delete_essay',

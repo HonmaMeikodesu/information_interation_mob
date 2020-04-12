@@ -51,21 +51,21 @@
                 </div>
                 <div class="essay-status">
                     <div class="thumbs-up">
-                        <van-icon name="thumb-circle-o" v-if="judgeThumbsUp(item.id)" @click="addThumbsUp(item)"/>
-                        <van-icon name="thumb-circle" v-else @click="removeThumbsUp(item)"/>
+                        <van-icon name="thumb-circle-o" v-if="judgeThumbsUp(item.id)" @click="addThumbsUp(item)" size="20px"/>
+                        <van-icon name="thumb-circle" v-else @click="removeThumbsUp(item)" size="20px"/>
                         <span>{{item.thumbsup_num}}</span>
                     </div>
                     <div class="booked">
-                        <van-icon name="star-o" v-if="judgeBooked(item.id)" @click="addBooked(item)" />
-                        <van-icon name="star" v-else @click="removeBooked(item)" />
+                        <van-icon name="star-o" v-if="judgeBooked(item.id)" @click="addBooked(item)" size="20px"/>
+                        <van-icon name="star" v-else @click="removeBooked(item)" size="20px"/>
                         <span>{{item.bookmarked_num}}</span>
                     </div>
                     <div class="comment">
-                        <van-icon name="comment-circle-o" @click="iNeedMoreDetails(item)"/>
+                        <van-icon name="comment-circle-o" @click="iNeedMoreDetails(item)" size="20px"/>
                         <span>{{item.review_num}}</span>
                     </div>
                     <div class="delete" @click="deleteEssay(item.id)" v-if="juegeEssayOwner(item.essay_user_id,item.essay_user_identity)">
-                        <van-icon name="cross" color="red"/>
+                        <van-icon name="cross" color="red" size="20px"/>
                         <span>删除文章</span>
                     </div>
                 </div>
@@ -215,11 +215,7 @@ export default {
             return true
       },
       addFollow(identity,id){
-          this.$toast.loading({
-              message:'操作中',
-              forbidClick: true,
-              duration: 0
-          })
+          this.$toast.$loading('操作中')
           const follow = identity.concat('/',id)
           request(true,{
             method: 'get',
@@ -239,11 +235,7 @@ export default {
       },
       removeFollow(identity,id){
           const follow = identity.concat('/',id)
-          this.$toast.loading({
-              message:'操作中',
-              forbidClick: true,
-              duration: 0
-          })
+          this.$toast.$loading('操作中')
           request(true,{
             method: 'get',
             url:'/api/user/unfollow',
@@ -355,11 +347,7 @@ export default {
         title: '确认提示',
         message: '您确定要删除该文章吗'
         }).then(() => {
-          this.$toast.loading({
-              message: '删除中',
-              forbidClick: true,
-              duration: 0
-          })
+          this.$toast.$loading('删除中')
           request(true,{
               method: 'get',
               url: '/api/moment/delete_essay',
@@ -581,19 +569,26 @@ export default {
         .essay-body-content
             padding 10px 0px 10px 5px
             .essay-body-content-words
-                font-size 15px
+                font-size 20px
         .essay-body-image
-            padding 10px 0px 30px 0px 
+            padding 10px 0px 50px 0px 
         .essay-status
             position absolute
             bottom 0px
             right 2px
             >div
                 display inline-block
-                padding 0 2px
+                @media only screen and (max-width: 330px)
+                    padding 0 3px
+                @media only screen and (min-width: 330px) and (max-width: 356px)
+                    padding 0 5px
+                @media only screen and (min-width: 356px) and (max-width: 370px)
+                    padding 0 8px
+                @media only screen and (min-width: 370px)
+                    padding 0 10px
                 >span
                     padding-left 1px
-                    font-size 14px
+                    font-size 20px
                     vertical-align top
             .delete
                 span 

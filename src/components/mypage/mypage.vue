@@ -28,7 +28,7 @@
                     <van-popup v-model="followFanshow">
                         <div class="follow-fan-details">
                             <div class="follow-details" v-if="followSelected">
-                                <van-collapse v-model="followActive">
+                                <van-collapse accordion v-model="followActive">
                                     <van-collapse-item title="关注部门" name="1" icon="friends-o">
                                         <div class="follow-fan-body">
                                             <div class="follow-fan-content" v-for="department in getFollow('department')" :key="department">
@@ -56,7 +56,7 @@
                                 </van-collapse>
                             </div>
                             <div class="fan-details" v-else>
-                                <van-collapse v-model="fanActive">
+                                <van-collapse accordion v-model="fanActive">
                                     <van-collapse-item title="组织粉丝" name="1" icon="friends-o">
                                         <div class="follow-fan-body">
                                             <div class="follow-fan-content" v-for="organization in getFan('organization')" :key="organization">
@@ -263,9 +263,7 @@ export default {
             this.followFanshow=true
             this.followSelected=false
         },
-        showUserInfo(){
-            let identity = this.$store.getters.identity
-            let user_id = (identity==='student')?this.$store.getters.basisInfo.id:this.$store.getters.organization_basisInfo.organization_name
+        showUserInfo(identity=this.$store.getters.identity,user_id=(identity==='student')?this.$store.getters.basisInfo.id:this.$store.getters.organization_basisInfo.organization_name){
             this.other_identity=identity
             request(true,{
                 method: 'get',
@@ -286,11 +284,7 @@ export default {
         },
         removeFollow(identity,id){
             const follow = identity.concat('/',id)
-            this.$toast.loading({
-                message:'操作中',
-                forbidClick: true,
-                duration: 0
-            })
+            this.$toast.$loading('操作中')
             request(true,{
                 method: 'get',
                 url:'/api/user/unfollow',
@@ -365,7 +359,7 @@ export default {
                 display flex
                 .follow-fan-details
                     .follow-fan-body
-                        max-height 150px
+                        max-height 200px
                         overflow auto
                         .follow-fan-content
                             display flex

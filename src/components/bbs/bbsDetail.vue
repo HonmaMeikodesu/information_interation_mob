@@ -5,7 +5,6 @@
       <div class="header">
         <van-icon name="arrow-left" @click="closeDetail()" size="25px" class="close" color="white"/>
         <span class="header-title">文章详情</span>
-        <van-icon name="add" class="add" size="20px" color="#f3f4f6" @click="sendCommentSelected=true" />
       </div>
       <div class="comment-content" @click="sendCommentSelected=false">
         <bbsItem :list="list" :now="now" @essayDeleted="closeDetailAndRefresh" @updateEssayAndRefresh='updateEssayAndRefresh'></bbsItem>
@@ -43,14 +42,18 @@
             </div>
             <van-divider style="margin:0"/>
           </div>
-          <div class="load-more">
-            <div v-if="loadMoreSelected">
-              <van-loading type="spinner" />
-            </div>
-            <div v-else>
-              <span @click="loadMore(list[0].id)">刷新评论</span>
-            </div>
-          </div>
+        </div>
+      </div>
+      <div class="comment-adder">
+        <van-icon name="add" class="add" size="40px" color="rgb(25,137,250)" @click="sendCommentSelected=true" />
+      </div>
+      <van-divider style="margin:0"/>
+      <div class="load-more">
+        <div v-if="loadMoreSelected">
+          <van-loading type="spinner" />
+        </div>
+        <div v-else>
+          <span @click="loadMore(list[0].id)">刷新评论</span>
         </div>
       </div>
     </div>
@@ -186,11 +189,7 @@ export default {
       title: '确认提示',
       message: '该评论将被删除'
       }).then(() => {
-        this.$toast.loading({
-            message: '删除中',
-            forbidClick: true,
-            duration: 0
-        })
+        this.$toast.$loading('删除中')
         request(true,{
             method: 'get',
             url: '/api/moment/delete_comment',
@@ -220,11 +219,7 @@ export default {
         this.$toast.fail('评论不能为空')
         return
       }
-      this.$toast.loading({
-        message:'发送中',
-        forbidClick: true,
-        duration: 0
-      })
+      this.$toast.$loading('发送中')
       let identity = this.$store.getters.identity
       request(true,{
         method: 'get',
@@ -288,10 +283,6 @@ export default {
     .header
       background-color #1989fa
       height 40px
-      .add
-        position absolute
-        right 10px
-        top 10px
       .close
         position absolute
         left 5px
@@ -308,6 +299,7 @@ export default {
       overflow auto
       .comment-wrapper
         .comment
+          position relative
           padding 10px 0
           display flex
           .comment-user-avatar
@@ -324,13 +316,18 @@ export default {
             .comment-content
               font-size 15px
           .delete
+            position absolute
+            top 10px
+            right 15px
             color red
             font-size 15px
             vertical-align top
-        .load-more
-          color #5c959a
-          font-size 15px
-          text-align center
+    .comment-adder
+      text-align center
+    .load-more
+      color #5c959a
+      font-size 15px
+      text-align center
   .over-lay-half
     flex 1
     background-color rgba(80,80,80,.7)

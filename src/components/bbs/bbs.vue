@@ -88,6 +88,11 @@
             bbsItem,
             bbsDetail
         },
+        watch:{
+            list:function(val){
+                if(val.length===0) this.finished=true
+            }
+        },
         computed: {
             flag(){
                 if(!this.$store.state.user_info.basisInfo) return false
@@ -118,11 +123,7 @@
         },
         methods: {
             onLoad(){
-                this.$toast.loading({
-                    message:'加载中',
-                    forbidClick: true,
-                    duration: 0
-                })
+                this.$toast.$loading('加载中')
                 request(true,{
                     method: 'get',
                     url: '/api/moment/get_all_list',
@@ -259,6 +260,10 @@
                 this.$options.methods.onRefresh.call(this)
             },
             onSearch(keyword){
+                if(keyword===''){
+                    this.searchSelected=false
+                    return
+                }
                 this.$toast.$loading('搜索中')
                 request(true,{
                     method: 'post',
@@ -318,7 +323,12 @@
             overflow hidden
             text-overflow ellipsis
             white-space nowrap
-            width 200px
+            @media only screen and (max-width 340px)
+                width 200px
+            @media only screen and (min-width 340px) and (max-width 380px)
+                width 250px
+            @media only screen and (min-width 380px)
+                width 300px
     .bbsDetail
         .slide-down-enter-active,.slide-down-leave-active
             transition all .5s ease 

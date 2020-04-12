@@ -63,7 +63,7 @@ export default {
 #detail
    position fixed
    width 100%
-   top 0
+   top 30px
    bottom 50px
    left 0
    right 0

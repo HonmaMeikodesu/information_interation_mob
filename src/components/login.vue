@@ -26,6 +26,7 @@
         <transition name='slide'>
             <div class="register-page" v-show="!notRegister">
                 <div class="header">
+                    <van-icon name="arrow-left" @click="switchPage" style="position:fixed;left:10px;top:10px;bottom:10px" size="30px" class="close" color="white"/>
                     <span class="login">
                         团体用户注册
                     </span>
@@ -75,11 +76,7 @@
                     password: password,
                     identity: this.identity
                 }
-                this.$toast.loading({
-                    message: '登陆中',
-                    forbidClick: true,
-                    duration: 5
-                })
+                this.$toast.$loading('登陆中')
                 request(false,{
                     method: 'post',
                     url: 'api/user/login',
@@ -103,11 +100,7 @@
                     organization_psw: password,
                     organization_info: introduction
                 }
-                this.$toast.loading({
-                    message: '注册中',
-                    forbidClick: true,
-                    duration: 5
-                })
+                this.$toast.$loading('注册中')
                 request(false,{
                     method: 'get',
                     url: 'api/user/register',
