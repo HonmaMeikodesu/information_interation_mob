@@ -1,5 +1,5 @@
 const path = require('path')
-
+const SOURCE_MAP_FLAG = process.env.NODE_ENV === 'production' ? false : true
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -9,7 +9,7 @@ module.exports = {
       .set('components', resolve('src/components'))
       .set('assets', resolve('src/assets'))
   },
-
+  productionSourceMap:SOURCE_MAP_FLAG,
   devServer: {
     proxy: {
       '/api': {
